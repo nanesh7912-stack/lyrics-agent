@@ -167,8 +167,8 @@ jobs:
           audio = safe_input(os.environ.get("AUDIO_FILE"), "Audio file", required=True)
           if audio.suffix.lower() not in {".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", ".opus", ".wma", ".mp4"}:
               raise SystemExit("Unsupported audio file type.")
-          if audio.stat().st_size > 100 * 1024 * 1024:
-              raise SystemExit("Audio files must be 100 MB or smaller.")
+          if audio.stat().st_size > 25 * 1024 * 1024:
+              raise SystemExit("Audio files must be 25 MiB or smaller for GitHub browser uploads.")
 
           lyrics = safe_input(os.environ.get("LYRICS_FILE"), "Lyrics file")
           if lyrics and lyrics.suffix.lower() not in {".txt", ".lrc"}:
@@ -188,6 +188,7 @@ jobs:
               "--fps", os.environ["FPS"],
               "--model", os.environ["MODEL"],
               "--style", os.environ["STYLE"],
+              "--title", title,
           ]
           if lyrics:
               command.extend(["--lyrics", str(lyrics)])
