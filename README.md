@@ -1,5 +1,9 @@
 # AI Lyrics Hero
 
+## GitHub-only cloud rendering
+
+Run the renderer on GitHub Actions and download the result from GitHub without using the Render.com service. First read [GITHUB_ONLY.md](GITHUB_ONLY.md); the workflow requires a private repository before you upload a song.
+
 Turns a song + its lyrics into a vertical (1080x1920, 30 fps by default) lyric video: timed ASS subtitles,
 kinetic "hero word" typography, meaning-matched animated scene backgrounds, music-aware motion, an optional outro with an
 explicit audio policy, and a verified MP4. Pure Python (Pillow + numpy) + FFmpeg. Works offline; AI services are optional.
