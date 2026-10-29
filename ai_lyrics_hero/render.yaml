@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: lyrics-agent
+    runtime: docker
+    plan: 2c-4g
+    dockerfilePath: ./ai_lyrics_hero/Dockerfile
+    dockerContext: .
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: AI_LYRICS_HERO_DATA_DIR
+        value: /var/data/lyrics-hero
+      - key: AI_LYRICS_HERO_MODEL_CACHE
+        value: /var/data/whisper-models
+      - key: AI_LYRICS_HERO_SECRET_KEY
+        generateValue: true
+      - key: AI_LYRICS_HERO_COOKIE_SECURE
+        value: "1"
+    disk:
+      name: lyrics-agent-data
+      mountPath: /var/data
+      sizeGB: 5

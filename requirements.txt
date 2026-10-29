@@ -1,0 +1,8 @@
+Pillow>=10.0      # needs libraqm for Devanagari shaping (standard wheels include it)
+numpy>=1.24
+Flask>=3.0
+pytest>=7.0       # tests only
+# Automatic draft lyric transcription and accurate word timing (downloads a model on first use):
+faster-whisper>=1.0
+PyYAML>=6.0         # read LRCLIB's word-synced Lyricsfile records
+gunicorn>=22.0; sys_platform != "win32"

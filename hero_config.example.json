@@ -1,0 +1,33 @@
+{
+  "enabled": true,
+  "background": "scenes",
+  "text_style": "hero",
+  "title": "",
+  "visualizer": false,
+  "images": false,
+
+  "hero_size": 210,
+  "support_size": 60,
+  "highlight_color": "auto",
+  "glow_intensity": 0.8,
+  "uppercase": false,
+  "animation_intensity": 1.0,
+  "typography": "auto",
+  "composition": "auto",
+  "transitions": "auto",
+  "beat_intensity": 1.0,
+  "interludes": true,
+  "seed": 0,
+
+  "target_duration": 0,
+  "outro_duration": 0,
+  "outro_audio": "continue",
+  "crossfade_s": 1.0,
+  "verify_output": true,
+
+  "asset_dirs": "",
+  "lexicon_path": "",
+  "icons_dir": "",
+  "scene_lexicon_path": "",
+  "llm_provider": "none"
+}

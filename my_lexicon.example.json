@@ -1,0 +1,12 @@
+{
+  "entries": [
+    {"id": "bus", "emoji": "🚌", "forms": ["bus", "buses", "bas"]},
+    {"id": "tiger", "emoji": "🐅", "forms": ["tiger", "sher", "शेर"]}
+  ],
+  "phrases": [
+    {"id": "golden_hour", "emoji": "🌅", "forms": ["golden hour"]}
+  ],
+  "block": ["bas"],
+  "ambiguous": ["sher"],
+  "unambiguous": ["ring"]
+}

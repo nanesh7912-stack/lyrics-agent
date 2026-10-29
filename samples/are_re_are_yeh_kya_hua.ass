@@ -1,0 +1,20 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour
+Style: Default,Poppins,60,&H00FFFFFF
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.25,Default,,0,0,0,,{\k100}Are {\k75}re {\k25}are {\k50}yeh {\k35}kya {\k40}hua
+Dialogue: 0,0:00:03.25,0:00:06.30,Default,,0,0,0,,{\k50}Maine {\k50}na {\k50}yeh {\k155}jaana
+Dialogue: 0,0:00:06.75,0:00:09.60,Default,,0,0,0,,{\k50}Are {\k25}re {\k50}are {\k25}ban {\k50}jaaye {\k85}na
+Dialogue: 0,0:00:09.75,0:00:12.40,Default,,0,0,0,,{\k75}kahin {\k25}koi {\k165}afsaana
+Dialogue: 0,0:00:12.50,0:00:16.20,Default,,0,0,0,,{\k90}Are {\k60}re {\k50}are {\k25}kuch {\k25}ho {\k120}gaya
+Dialogue: 0,0:00:16.25,0:00:19.10,Default,,0,0,0,,{\k75}koi {\k50}na {\k160}pehchaana
+Dialogue: 0,0:00:19.25,0:00:22.45,Default,,0,0,0,,{\k50}Are {\k50}re {\k75}are {\k75}banta {\k50}hai {\k20}to
+Dialogue: 0,0:00:22.50,0:00:25.60,Default,,0,0,0,,{\k75}ban {\k50}jaaye {\k185}afsaana
+Dialogue: 0,0:00:26.00,0:00:29.20,Default,,0,0,0,,{\k50}la {\k25}la {\k25}la {\k25}la {\k195}la

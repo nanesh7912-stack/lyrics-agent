@@ -1,0 +1,818 @@
+{
+ "_note": "Exact-match only. Ambiguous words never get an image unless allow_ambiguous is on. Add your own entries via lexicon_path.",
+ "entries": [
+  {
+   "id": "eyes",
+   "emoji": "👀",
+   "forms": [
+    "eyes",
+    "aankhen",
+    "aankhein",
+    "ankhen",
+    "ankhein",
+    "aankhon",
+    "ankhon",
+    "आँखें",
+    "आंखें",
+    "आँखों",
+    "आंखों",
+    "नैना",
+    "naina",
+    "nainon"
+   ]
+  },
+  {
+   "id": "eye",
+   "emoji": "👁️",
+   "forms": [
+    "eye",
+    "aankh",
+    "ankh",
+    "आँख",
+    "आंख"
+   ]
+  },
+  {
+   "id": "heart",
+   "emoji": "❤️",
+   "forms": [
+    "heart",
+    "hearts",
+    "dil",
+    "dilon",
+    "दिल",
+    "दिलों"
+   ]
+  },
+  {
+   "id": "love",
+   "emoji": "💕",
+   "forms": [
+    "love",
+    "pyar",
+    "pyaar",
+    "ishq",
+    "ishk",
+    "mohabbat",
+    "muhabbat",
+    "प्यार",
+    "इश्क़",
+    "इश्क",
+    "मोहब्बत"
+   ]
+  },
+  {
+   "id": "kiss",
+   "emoji": "💋",
+   "forms": [
+    "kiss",
+    "kisses",
+    "chumma",
+    "बोसा",
+    "चुम्बन"
+   ]
+  },
+  {
+   "id": "lips",
+   "emoji": "👄",
+   "forms": [
+    "lips",
+    "hont",
+    "honth",
+    "hothon",
+    "होंठ",
+    "होठ"
+   ]
+  },
+  {
+   "id": "tears",
+   "emoji": "😢",
+   "forms": [
+    "tears",
+    "tear",
+    "aansu",
+    "ansu",
+    "aansoo",
+    "आँसू",
+    "आंसू"
+   ]
+  },
+  {
+   "id": "smile",
+   "emoji": "😊",
+   "forms": [
+    "smile",
+    "smiles",
+    "muskaan",
+    "muskan",
+    "muskurahat",
+    "मुस्कान"
+   ]
+  },
+  {
+   "id": "car",
+   "emoji": "🚗",
+   "forms": [
+    "car",
+    "cars",
+    "gaadi",
+    "gadi",
+    "gaari",
+    "गाड़ी",
+    "गाडी"
+   ]
+  },
+  {
+   "id": "bike",
+   "emoji": "🏍️",
+   "forms": [
+    "bike",
+    "motorcycle",
+    "motorbike"
+   ]
+  },
+  {
+   "id": "train",
+   "emoji": "🚆",
+   "forms": [
+    "train",
+    "rail",
+    "railgaadi",
+    "ट्रेन",
+    "रेल"
+   ]
+  },
+  {
+   "id": "plane",
+   "emoji": "✈️",
+   "forms": [
+    "plane",
+    "aeroplane",
+    "airplane",
+    "jahaz",
+    "hawaijahaz",
+    "हवाईजहाज़"
+   ]
+  },
+  {
+   "id": "ship",
+   "emoji": "🚢",
+   "forms": [
+    "ship",
+    "jahaaz"
+   ]
+  },
+  {
+   "id": "moon",
+   "emoji": "🌙",
+   "forms": [
+    "moon",
+    "chand",
+    "chaand",
+    "chandni",
+    "चाँद",
+    "चांद",
+    "चाँदनी"
+   ]
+  },
+  {
+   "id": "stars",
+   "emoji": "⭐",
+   "forms": [
+    "star",
+    "stars",
+    "sitare",
+    "sitaare",
+    "taare",
+    "taaron",
+    "सितारे",
+    "तारे",
+    "सितारा"
+   ]
+  },
+  {
+   "id": "sky",
+   "emoji": "🌌",
+   "forms": [
+    "sky",
+    "aasman",
+    "aasmaan",
+    "asman",
+    "gagan",
+    "आसमान",
+    "आसमाँ",
+    "गगन"
+   ]
+  },
+  {
+   "id": "sun",
+   "emoji": "☀️",
+   "forms": [
+    "suraj",
+    "sooraj",
+    "surya",
+    "सूरज",
+    "सूर्य"
+   ]
+  },
+  {
+   "id": "rain",
+   "emoji": "🌧️",
+   "forms": [
+    "rain",
+    "barish",
+    "baarish",
+    "barsaat",
+    "बारिश",
+    "बरसात"
+   ]
+  },
+  {
+   "id": "cloud",
+   "emoji": "☁️",
+   "forms": [
+    "cloud",
+    "clouds",
+    "badal",
+    "baadal",
+    "बादल"
+   ]
+  },
+  {
+   "id": "storm",
+   "emoji": "⛈️",
+   "forms": [
+    "storm",
+    "toofan",
+    "tufan",
+    "तूफ़ान",
+    "तूफान"
+   ]
+  },
+  {
+   "id": "snow",
+   "emoji": "❄️",
+   "forms": [
+    "snow",
+    "baraf",
+    "barf",
+    "बर्फ़",
+    "बर्फ"
+   ]
+  },
+  {
+   "id": "wind",
+   "emoji": "💨",
+   "forms": [
+    "wind",
+    "hawa",
+    "hawaa",
+    "हवा"
+   ]
+  },
+  {
+   "id": "fire",
+   "emoji": "🔥",
+   "forms": [
+    "fire",
+    "aag",
+    "agni",
+    "आग"
+   ]
+  },
+  {
+   "id": "flame",
+   "emoji": "🔥",
+   "forms": [
+    "flame",
+    "flames",
+    "shola",
+    "sholay",
+    "शोला"
+   ]
+  },
+  {
+   "id": "flower",
+   "emoji": "🌸",
+   "forms": [
+    "flower",
+    "flowers",
+    "phool",
+    "phul",
+    "phoolon",
+    "फूल",
+    "फूलों"
+   ]
+  },
+  {
+   "id": "rose",
+   "emoji": "🌹",
+   "forms": [
+    "rose",
+    "roses",
+    "gulab",
+    "गुलाब"
+   ]
+  },
+  {
+   "id": "butterfly",
+   "emoji": "🦋",
+   "forms": [
+    "butterfly",
+    "titli",
+    "तितली"
+   ]
+  },
+  {
+   "id": "bird",
+   "emoji": "🐦",
+   "forms": [
+    "bird",
+    "birds",
+    "panchhi",
+    "panchi",
+    "parinda",
+    "परिंदा",
+    "पंछी",
+    "पक्षी"
+   ]
+  },
+  {
+   "id": "sea",
+   "emoji": "🌊",
+   "forms": [
+    "sea",
+    "ocean",
+    "waves",
+    "samundar",
+    "samandar",
+    "sagar",
+    "lehar",
+    "laharen",
+    "समंदर",
+    "समुद्र",
+    "सागर",
+    "लहर"
+   ]
+  },
+  {
+   "id": "mountain",
+   "emoji": "⛰️",
+   "forms": [
+    "mountain",
+    "mountains",
+    "pahad",
+    "pahaad",
+    "पहाड़",
+    "पहाड"
+   ]
+  },
+  {
+   "id": "night",
+   "emoji": "🌃",
+   "forms": [
+    "night",
+    "raat",
+    "raaton",
+    "रात",
+    "रातें"
+   ]
+  },
+  {
+   "id": "home",
+   "emoji": "🏠",
+   "forms": [
+    "home",
+    "ghar",
+    "घर"
+   ]
+  },
+  {
+   "id": "road",
+   "emoji": "🛣️",
+   "forms": [
+    "road",
+    "raasta",
+    "rasta",
+    "sadak",
+    "राह",
+    "रास्ता",
+    "सड़क"
+   ]
+  },
+  {
+   "id": "door",
+   "emoji": "🚪",
+   "forms": [
+    "door",
+    "darwaza",
+    "darwaja",
+    "दरवाज़ा",
+    "दरवाजा"
+   ]
+  },
+  {
+   "id": "key",
+   "emoji": "🔑",
+   "forms": [
+    "key",
+    "chabi",
+    "chaabi",
+    "चाबी"
+   ]
+  },
+  {
+   "id": "mirror",
+   "emoji": "🪞",
+   "forms": [
+    "mirror",
+    "aaina",
+    "aina",
+    "आईना",
+    "आइना"
+   ]
+  },
+  {
+   "id": "ring",
+   "emoji": "💍",
+   "forms": [
+    "ring",
+    "anguthi",
+    "angoothi",
+    "अंगूठी"
+   ]
+  },
+  {
+   "id": "crown",
+   "emoji": "👑",
+   "forms": [
+    "crown",
+    "taaj",
+    "taj",
+    "ताज"
+   ]
+  },
+  {
+   "id": "king",
+   "emoji": "🤴",
+   "forms": [
+    "king",
+    "raja",
+    "raaja",
+    "राजा"
+   ]
+  },
+  {
+   "id": "queen",
+   "emoji": "👸",
+   "forms": [
+    "queen",
+    "rani",
+    "raani",
+    "रानी"
+   ]
+  },
+  {
+   "id": "diamond",
+   "emoji": "💎",
+   "forms": [
+    "diamond",
+    "heera",
+    "hira",
+    "हीरा"
+   ]
+  },
+  {
+   "id": "money",
+   "emoji": "💰",
+   "forms": [
+    "money",
+    "paisa",
+    "paise",
+    "पैसा",
+    "पैसे"
+   ]
+  },
+  {
+   "id": "music",
+   "emoji": "🎵",
+   "forms": [
+    "music",
+    "sangeet",
+    "sur",
+    "संगीत"
+   ]
+  },
+  {
+   "id": "song",
+   "emoji": "🎶",
+   "forms": [
+    "song",
+    "songs",
+    "gaana",
+    "gana",
+    "geet",
+    "गाना",
+    "गीत"
+   ]
+  },
+  {
+   "id": "dance",
+   "emoji": "💃",
+   "forms": [
+    "dance",
+    "dancing",
+    "naach",
+    "nachna",
+    "nach",
+    "नाच",
+    "नाचना"
+   ]
+  },
+  {
+   "id": "sleep",
+   "emoji": "😴",
+   "forms": [
+    "sleep",
+    "neend",
+    "nind",
+    "नींद"
+   ]
+  },
+  {
+   "id": "dream",
+   "emoji": "💭",
+   "forms": [
+    "dream",
+    "dreams",
+    "sapna",
+    "sapne",
+    "khwab",
+    "khwaab",
+    "ख़्वाब",
+    "ख्वाब",
+    "सपना",
+    "सपने"
+   ]
+  },
+  {
+   "id": "hand",
+   "emoji": "✋",
+   "forms": [
+    "hand",
+    "hands",
+    "haath",
+    "hath",
+    "haathon",
+    "हाथ",
+    "हाथों"
+   ]
+  },
+  {
+   "id": "phone",
+   "emoji": "📱",
+   "forms": [
+    "phone",
+    "mobile",
+    "फ़ोन",
+    "फोन"
+   ]
+  },
+  {
+   "id": "clock",
+   "emoji": "⏰",
+   "forms": [
+    "clock",
+    "ghadi",
+    "घड़ी"
+   ]
+  },
+  {
+   "id": "book",
+   "emoji": "📖",
+   "forms": [
+    "book",
+    "kitaab",
+    "kitab",
+    "किताब"
+   ]
+  },
+  {
+   "id": "letter",
+   "emoji": "💌",
+   "forms": [
+    "letter",
+    "khat",
+    "khatt",
+    "chitthi",
+    "ख़त",
+    "खत",
+    "चिट्ठी"
+   ]
+  },
+  {
+   "id": "gift",
+   "emoji": "🎁",
+   "forms": [
+    "gift",
+    "tohfa",
+    "तोहफ़ा",
+    "तोहफा"
+   ]
+  },
+  {
+   "id": "rainbow",
+   "emoji": "🌈",
+   "forms": [
+    "rainbow",
+    "indradhanush",
+    "इंद्रधनुष"
+   ]
+  },
+  {
+   "id": "tree",
+   "emoji": "🌳",
+   "forms": [
+    "tree",
+    "trees",
+    "ped",
+    "पेड़",
+    "पेड"
+   ]
+  },
+  {
+   "id": "candle",
+   "emoji": "🕯️",
+   "forms": [
+    "candle",
+    "diya",
+    "deepak",
+    "दिया",
+    "दीपक"
+   ]
+  },
+  {
+   "id": "lightbulb",
+   "emoji": "💡",
+   "forms": [
+    "bulb",
+    "lightbulb"
+   ]
+  },
+  {
+   "id": "angel",
+   "emoji": "👼",
+   "forms": [
+    "angel",
+    "farishta",
+    "फ़रिश्ता",
+    "फरिश्ता"
+   ]
+  },
+  {
+   "id": "ghost",
+   "emoji": "👻",
+   "forms": [
+    "ghost",
+    "bhoot",
+    "भूत"
+   ]
+  },
+  {
+   "id": "skull",
+   "emoji": "💀",
+   "forms": [
+    "skull"
+   ]
+  },
+  {
+   "id": "pray",
+   "emoji": "🙏",
+   "forms": [
+    "prayer",
+    "dua",
+    "duaa",
+    "pooja",
+    "puja",
+    "दुआ",
+    "पूजा",
+    "प्रार्थना"
+   ]
+  },
+  {
+   "id": "broken_heart",
+   "emoji": "💔",
+   "forms": [
+    "heartbreak",
+    "heartbroken"
+   ]
+  }
+ ],
+ "phrases": [
+  {
+   "id": "blue_eyes",
+   "emoji": "👀",
+   "forms": [
+    "blue eyes"
+   ]
+  },
+  {
+   "id": "dilbar",
+   "emoji": "💘",
+   "forms": [
+    "dil bar",
+    "dilbar",
+    "दिल बर",
+    "दिलबर"
+   ]
+  },
+  {
+   "id": "broken_heart",
+   "emoji": "💔",
+   "forms": [
+    "broken heart",
+    "dil toota",
+    "dil tuta",
+    "दिल टूटा"
+   ]
+  },
+  {
+   "id": "full_moon",
+   "emoji": "🌕",
+   "forms": [
+    "full moon",
+    "purnima",
+    "poornima"
+   ]
+  },
+  {
+   "id": "shooting_star",
+   "emoji": "🌠",
+   "forms": [
+    "shooting star",
+    "toota tara",
+    "tuta tara"
+   ]
+  },
+  {
+   "id": "red_rose",
+   "emoji": "🌹",
+   "forms": [
+    "red rose",
+    "laal gulab",
+    "lal gulab"
+   ]
+  }
+ ],
+ "ambiguous": [
+  "sun",
+  "kal",
+  "jaan",
+  "tara",
+  "sona",
+  "nazar",
+  "light",
+  "saath",
+  "pal",
+  "din",
+  "main",
+  "rang",
+  "gold",
+  "time",
+  "waqt",
+  "sur",
+  "sitara",
+  "taj",
+  "sagar",
+  "hira",
+  "heera",
+  "deepak",
+  "diya",
+  "दिया",
+  "tear",
+  "waves",
+  "ring",
+  "ताज",
+  "सागर",
+  "हीरा",
+  "दीपक"
+ ],
+ "block": [
+  "bar",
+  "kar",
+  "kare",
+  "kiya",
+  "pan",
+  "ban",
+  "hai",
+  "ho",
+  "to",
+  "na",
+  "are",
+  "re",
+  "mat",
+  "man",
+  "meri",
+  "tere"
+ ]
+}

@@ -1,0 +1,9 @@
+{
+  "background": "scenes",
+  "text_style": "caption",
+  "images": false,
+  "visualizer": false,
+  "caption_size": 66,
+  "caption_highlight": "#9aa8ff",
+  "title": ""
+}
