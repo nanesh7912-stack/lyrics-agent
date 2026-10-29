@@ -375,8 +375,10 @@ def create_app(test_config=None):
                 raise ValueError("Video length must be between 2 and 600 seconds.")
             if fps not in {24, 25, 30, 60}:
                 raise ValueError("Choose 24, 25, 30, or 60 frames per second.")
-            if width < 360 or height < 360 or width > 1920 or height > 1920:
-                raise ValueError("Video dimensions must be between 360 and 1920 pixels.")
+            max_4k_pixels = 3840 * 2160
+            if (width < 360 or height < 360 or width > 3840 or height > 3840
+                    or width * height > max_4k_pixels):
+                raise ValueError("Video dimensions must be between 360 pixels and the 4K UHD pixel limit.")
         except (ValueError, TypeError):
             return jsonify(error="Check the video length, start time, size, and frame rate."), 400
         lyrics_text = (payload.get("lyrics_text") or "").strip()
