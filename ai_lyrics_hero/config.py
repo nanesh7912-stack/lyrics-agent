@@ -41,7 +41,7 @@ class HeroConfig:
     image_gap_events: int = 2        # don't repeat the same picture within this many lyric lines
     lexicon_path: str = ""           # optional JSON with extra/override dictionary entries
     icons_dir: str = ""              # optional folder of transparent PNGs named <entry id>.png
-    background: str = "classic"      # classic (purple geometric) | scenes (meaning-driven animated night scenes)
+    background: str = "classic"      # classic (song-colored geometric) | scenes (meaning-driven animated night scenes)
     text_style: str = "hero"         # hero (big glowing word) | caption (small bold lines, current word highlighted)
     visualizer: bool = True          # audio bars at the bottom
     caption_size: int = 66           # px at 1080 px width (caption style)
@@ -51,7 +51,7 @@ class HeroConfig:
     outro_duration: float = 0.0      # seconds of the outro to use (0 = the outro file's full length)
     outro_audio: str = "continue"    # continue | outro | silent | mix
     crossfade_s: float = 1.0         # used by outro_audio=mix
-    seed: int = 0                    # makes every random-looking choice reproducible
+    seed: int = 0                    # 0 = stable song-specific look; nonzero = explicit repeatable seed
     verify_output: bool = True       # ffprobe/decode check after rendering
     beat_intensity: float = 1.0      # 0 disables beat-driven pulses/shake, 2 = strong
     asset_dirs: str = ""             # folders with your own images (see assets/user/README.txt), os.pathsep separated

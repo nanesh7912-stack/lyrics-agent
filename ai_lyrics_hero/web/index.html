@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080d18">
   <meta name="description" content="Turn a song into a polished, timed lyric video with AI Lyrics Hero.">
-  <title>AI Lyrics Hero â€” Create lyric videos</title>
+  <title>AI Lyrics Hero — Create lyric videos</title>
   <link rel="stylesheet" href="/assets/styles.css">
 </head>
 <body>
@@ -14,7 +14,7 @@
     <div class="app-shell">
       <aside class="sidebar" :class="{'sidebar-open': mobileMenuOpen}" aria-label="Main navigation">
         <a class="brand" href="/" @click.prevent="navigate('create')" aria-label="AI Lyrics Hero home">
-          <span class="brand-mark" aria-hidden="true">â™«</span>
+          <span class="brand-mark" aria-hidden="true">♫</span>
           <span><strong>AI Lyrics <b>Hero</b></strong><small>Make every word shine</small></span>
         </a>
         <nav class="nav-list">
@@ -33,7 +33,7 @@
         </nav>
         <div class="sidebar-bottom">
           <div class="server-status"><span class="status-dot"></span><span><strong>Video engine</strong><small>Ready for your next song</small></span></div>
-          <p class="sidebar-version">AI Lyrics Hero <span>â€¢</span> Browser studio</p>
+          <p class="sidebar-version">AI Lyrics Hero <span>•</span> Browser studio</p>
         </div>
       </aside>
 
@@ -41,12 +41,12 @@
       <div class="main-column">
         <header class="topbar">
           <button class="icon-button mobile-menu-button" @click="mobileMenuOpen=!mobileMenuOpen" :aria-expanded="mobileMenuOpen" aria-label="Toggle navigation">
-            <span aria-hidden="true">â˜°</span>
+            <span aria-hidden="true">☰</span>
           </button>
           <div class="breadcrumb"><span>AI Lyrics Hero</span><span class="crumb-sep">/</span><strong>{{pageTitle}}</strong></div>
           <div class="topbar-actions">
             <span class="online-pill"><span class="status-dot"></span> Ready</span>
-            <span class="avatar" aria-hidden="true">â™«</span>
+            <span class="avatar" aria-hidden="true">♫</span>
           </div>
         </header>
 
@@ -55,12 +55,12 @@
             <div class="page-heading">
               <div><p class="eyebrow">YOUR CREATIVE STUDIO</p><h1 id="create-title">Create lyric video</h1>
                 <p class="page-subtitle">Upload a song, let the lyrics sync automatically, then shape the look.</p></div>
-              <button class="button button-quiet save-top" @click="saveProject" :disabled="!options.title.trim()">ï¼‹ Save project</button>
+              <button class="button button-quiet save-top" @click="saveProject" :disabled="!options.title.trim()">＋ Save project</button>
             </div>
             <div class="stepper" aria-label="Creation steps">
               <button v-for="(label,index) in steps" :key="label" class="step" :class="{current:step===index+1,done:step>index+1}"
                       @click="step=index+1" :aria-current="step===index+1?'step':null">
-                <span class="step-number">{{step>index+1?'âœ“':index+1}}</span><span>{{label}}</span>
+                <span class="step-number">{{step>index+1?'✓':index+1}}</span><span>{{label}}</span>
               </button>
             </div>
 
@@ -71,15 +71,15 @@
                        @dragenter.prevent="isDragging=true" @dragover.prevent="isDragging=true" @dragleave.prevent="isDragging=false"
                        @drop.prevent="onDrop" for="audio-input" tabindex="0" @keydown.enter.prevent="$refs.audioInput.click()" @keydown.space.prevent="$refs.audioInput.click()">
                   <input ref="audioInput" id="audio-input" class="visually-hidden" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.flac,.ogg,.opus,.wma" @change="onAudioChange">
-                  <span class="upload-icon" aria-hidden="true">â‡§</span>
+                  <span class="upload-icon" aria-hidden="true">⇧</span>
                   <strong>{{audioFile ? 'Drop a new song to replace this one' : 'Drag your audio file here'}}</strong>
                   <span class="drop-or">or <u>browse files</u></span>
-                  <small>MP3, WAV, M4A, AAC, FLAC, OGG Â· up to 100 MB</small>
+                  <small>MP3, WAV, M4A, AAC, FLAC, OGG · up to 100 MB</small>
                 </label>
                 <div v-if="audioFile" class="file-card">
-                  <span class="file-icon" aria-hidden="true">â™«</span>
+                  <span class="file-icon" aria-hidden="true">♫</span>
                   <span class="file-info"><strong>{{audioFile.name}}</strong><small>{{formatSize(audioFile.size)}}</small></span>
-                  <button class="icon-button remove-button" @click="clearAudio" aria-label="Remove audio file">Ã—</button>
+                  <button class="icon-button remove-button" @click="clearAudio" aria-label="Remove audio file">×</button>
                 </div>
                 <div v-if="audioUrl" class="audio-preview"><label for="audio-preview">Listen to your song</label><audio id="audio-preview" :src="audioUrl" controls preload="metadata"></audio></div>
               </article>
@@ -92,10 +92,10 @@
                   <button :class="{selected:lyricsMode==='custom'}" @click="lyricsMode='custom'">I have lyrics</button>
                 </div>
                 <div v-if="lyricsMode==='auto'" class="auto-lyrics-note">
-                  <span class="sparkle" aria-hidden="true">âœ¦</span><div><strong>Find song lyrics, then align to the vocals</strong><p>We look for a matching lyric entry first. If word-level timings exist, we use them; otherwise, a larger speech model helps time the words. Catalog matches are community-supplied; if none match, the transcript is an unverified draft.</p></div>
+                  <span class="sparkle" aria-hidden="true">✦</span><div><strong>Find song lyrics, then align to the vocals</strong><p>We look for a matching lyric entry first. If word-level timings exist, we use them; otherwise, a larger speech model helps time the words. Catalog matches are community-supplied; if none match, the transcript is an unverified draft.</p></div>
                 </div>
                 <div v-if="lyricsMode==='auto'" class="form-grid track-lookup-fields">
-                  <label class="field"><span>Song title</span><input v-model.trim="options.trackTitle" type="text" maxlength="200" placeholder="Often filled from â€˜Title - Artist.mp3â€™"></label>
+                  <label class="field"><span>Song title</span><input v-model.trim="options.trackTitle" type="text" maxlength="200" placeholder="Often filled from ‘Title - Artist.mp3’"></label>
                   <label class="field"><span>Artist</span><input v-model.trim="options.artist" type="text" maxlength="200" placeholder="Required for lyric lookup"></label>
                 </div>
                 <label v-if="lyricsMode==='auto'" class="check-row lookup-toggle"><input type="checkbox" v-model="options.lyricsLookup"><span>Look up matching lyrics online</span></label>
@@ -106,7 +106,7 @@
                     <button :class="{selected:lyricsFormat==='lrc'}" @click="lyricsFormat='lrc'">LRC timestamps</button>
                   </div>
                   <label class="field-label" for="lyrics-text">{{lyricsFormat==='lrc'?'Paste timestamped LRC lyrics':'Paste your lyrics'}}</label>
-                  <textarea id="lyrics-text" v-model="lyricsText" class="lyrics-textarea" maxlength="100000" :placeholder="lyricsFormat==='lrc'?'[00:12.50]First line\n[00:16.20]Second line':'Paste or type lyrics here. Put each line on a new rowâ€¦'"></textarea>
+                  <textarea id="lyrics-text" v-model="lyricsText" class="lyrics-textarea" maxlength="100000" :placeholder="lyricsFormat==='lrc'?'[00:12.50]First line\n[00:16.20]Second line':'Paste or type lyrics here. Put each line on a new row…'"></textarea>
                   <div class="character-count">{{lyricsText.length.toLocaleString()}} / 100,000 characters</div>
                   <label class="check-row"><input type="checkbox" v-model="options.romanize"><span>Show Hindi lyrics in Roman letters</span></label>
                 </template>
@@ -122,12 +122,12 @@
               <div class="form-grid">
                 <label class="field"><span>Start at</span><div class="input-with-unit"><input v-model.number="options.start" type="number" min="0" step="1" :disabled="options.autoSelect"><span>seconds</span></div><small>{{options.autoSelect?'Chosen automatically from the whole song.':'Where the video begins in your song.'}}</small></label>
                 <label class="field"><span>Video length</span><div class="input-with-unit"><input v-model.number="options.duration" type="number" min="2" max="600" step="1"><span>seconds</span></div><small>Continue from the start for this full duration.</small></label>
-                <label class="field"><span>Output size</span><select v-model="options.size" class="select-control"><option value="1080x1920">Portrait Â· 1080 Ã— 1920</option><option value="720x1280">Portrait Â· 720 Ã— 1280</option><option value="1080x1080">Square Â· 1080 Ã— 1080</option><option value="1920x1080">Landscape Â· 1920 Ã— 1080</option><option value="2160x3840">Portrait Â· 4K Â· 2160 Ã— 3840</option><option value="3840x2160">Landscape Â· 4K UHD Â· 3840 Ã— 2160</option></select><small>4K uses about four times the pixels of 1080p and needs a high-memory renderer. Free hosting may be slow or run out of memory.</small></label>
-                <label class="field"><span>Frame rate</span><select v-model.number="options.fps" class="select-control"><option :value="30">30 fps Â· Recommended</option><option :value="24">24 fps Â· Cinematic</option><option :value="60">60 fps Â· Smooth</option></select><small>Higher frame rates take longer to render.</small></label>
+                <label class="field"><span>Output size</span><select v-model="options.size" class="select-control"><option value="1080x1920">Portrait · 1080 × 1920</option><option value="720x1280">Portrait · 720 × 1280</option><option value="1080x1080">Square · 1080 × 1080</option><option value="1920x1080">Landscape · 1920 × 1080</option><option value="2160x3840">Portrait · 4K · 2160 × 3840</option><option value="3840x2160">Landscape · 4K UHD · 3840 × 2160</option></select><small>4K uses about four times the pixels of 1080p and needs a high-memory renderer. Free hosting may be slow or run out of memory.</small></label>
+                <label class="field"><span>Frame rate</span><select v-model.number="options.fps" class="select-control"><option :value="30">30 fps · Recommended</option><option :value="24">24 fps · Cinematic</option><option :value="60">60 fps · Smooth</option></select><small>Higher frame rates take longer to render.</small></label>
               </div>
               <label class="check-row best-section-toggle"><input type="checkbox" v-model="options.autoSelect"><span>Find the best lyric section across the whole song</span></label>
               <p class="field-hint">We compare continuous sections for lyric coverage, word density, repeated lines, and timing confidence. Your video stays one uninterrupted part of the song.</p>
-              <div class="timing-tip"><span aria-hidden="true">â—·</span><div><strong>Your clip stays continuous</strong><p>The selected section plays straight through, with no gaps or cuts added.</p></div></div>
+              <div class="timing-tip"><span aria-hidden="true">◷</span><div><strong>Your clip stays continuous</strong><p>The selected section plays straight through, with no gaps or cuts added.</p></div></div>
             </div>
 
             <div v-if="step===3" class="panel style-panel">
@@ -140,7 +140,7 @@
                   <span class="style-copy"><strong>{{style.title}}</strong><small>{{style.description}}</small></span><span class="radio-dot" aria-hidden="true"></span>
                 </button>
               </div>
-              <div class="style-footer"><label class="check-row"><input type="checkbox" v-model="options.romanize"><span>Romanize Hindi lyrics into Latin letters</span></label><span class="field-hint">You can edit the transcript after rendering.</span></div>
+              <div class="style-footer"><label class="check-row"><input type="checkbox" v-model="options.romanize"><span>Romanize Hindi lyrics into Latin letters</span></label><span class="field-hint">Review and correct lyrics before rendering.</span></div>
             </div>
 
             <div v-if="step===4" class="panel export-panel">
@@ -149,63 +149,81 @@
                 <div class="summary-card">
                   <div class="summary-row"><span>Audio</span><strong>{{audioFile ? audioFile.name : 'No file selected'}}</strong></div>
                   <div class="summary-row"><span>Lyrics</span><strong>{{lyricsMode==='auto'?'Create from song':(lyricsText.trim()?'Your supplied lyrics':'No lyrics entered')}}</strong></div>
-                  <div class="summary-row"><span>Song section</span><strong>{{options.autoSelect?'Best section from the whole song':'Starts at '+options.start+'s'}} Â· {{options.duration}} seconds continuous</strong></div>
-                  <div class="summary-row"><span>Look</span><strong>{{selectedStyle.title}} Â· {{options.size}}</strong></div>
+                  <div class="summary-row"><span>Song section</span><strong>{{options.autoSelect?'Best section from the whole song':'Starts at '+options.start+'s'}} · {{options.duration}} seconds continuous</strong></div>
+                  <div class="summary-row"><span>Look</span><strong>{{selectedStyle.title}} · {{options.size}}</strong></div>
                 </div>
                 <div v-if="!audioFile" class="inline-error" role="alert">Choose an audio file on the first step before creating a video.</div>
-                <div class="export-actions"><button class="button button-primary button-large" :disabled="!audioFile||submitting" @click="createVideo">{{submitting?'Startingâ€¦':'Create my video'}} <span aria-hidden="true">â†’</span></button></div>
+                <div class="export-actions"><button class="button button-primary button-large" :disabled="!audioFile||submitting" @click="createVideo">{{submitting?'Starting…':'Create my video'}} <span aria-hidden="true">→</span></button></div>
                 <p class="privacy-note">Your song and video stay private to this browser session.</p>
               </template>
               <div v-else class="job-view" aria-live="polite">
                 <div class="job-status-head"><div><span class="section-kicker">YOUR VIDEO</span><h2>{{activeJob.title}}</h2></div><span class="job-badge" :class="'badge-'+activeJob.status">{{statusLabel(activeJob.status)}}</span></div>
                 <div v-if="activeJob.status==='queued'||activeJob.status==='running'" class="progress-section">
-                  <div class="progress-copy"><span>{{activeJob.stage}}</span><strong>{{Math.round(activeJob.progress*100)}}%</strong></div>
-                  <div class="progress-track" role="progressbar" :aria-valuenow="Math.round(activeJob.progress*100)" aria-valuemin="0" aria-valuemax="100" :aria-label="activeJob.stage"><span :style="{width:Math.max(2,activeJob.progress*100)+'%'}"></span></div>
-                  <p class="muted">Automatic transcription and video rendering can take a few minutes for a full song.</p>
+                  <div class="progress-copy"><span>{{activeJob.stage}}</span><strong v-if="activeJob.progress>=0.5">{{Math.round(activeJob.progress*100)}}%</strong></div>
+                  <div v-if="activeJob.progress>=0.5" class="progress-track" role="progressbar" :aria-valuenow="Math.round(activeJob.progress*100)" aria-valuemin="0" aria-valuemax="100" :aria-label="activeJob.stage"><span :style="{width:Math.max(2,activeJob.progress*100)+'%'}"></span></div>
+                  <p class="muted">{{activeJob.progress<0.5?'Finding lyrics and timing words can take a few minutes for a full song.':'Rendering your video; larger files take longer.'}}</p>
                 </div>
+                <section v-if="activeJob.status==='review'" class="lyrics-review" aria-labelledby="lyrics-review-title">
+                  <div class="review-intro">
+                    <h3 id="lyrics-review-title">Review the lyrics</h3>
+                    <p>{{lyricSourceLabel()}}. Singing can be misheard, so listen to the song and correct spelling before rendering.</p>
+                    <p class="review-tip">Check marked lines for spelling or timing issues. Timing notes are shown separately. If you add or remove words, their timing will be recalculated.</p>
+                  </div>
+                  <div v-if="activeJob.audio_url" class="review-audio"><label for="review-audio-player">Listen to the song while checking</label><audio id="review-audio-player" ref="reviewAudio" :src="activeJob.audio_url" controls preload="metadata"></audio></div>
+                  <div v-if="reviewError" class="inline-error" role="alert">{{reviewError}} <button class="button button-small button-quiet" @click="loadReviewDraft(activeJob)">Try again</button></div>
+                  <div v-if="reviewLoading" class="muted">Loading the lyric draft…</div>
+                  <div v-else class="review-lines" aria-label="Editable lyric lines">
+                    <article v-for="(line,index) in reviewLines" :key="line.index" class="review-line">
+                      <div class="review-line-head"><span>Line {{index+1}} · <button class="review-time" @click="playFrom(line.start)" :aria-label="'Play song from line '+(index+1)+' at '+formatSongTime(line.start)">{{formatSongTime(line.start)}}</button></span><span v-if="line.needs_review" class="review-flag">Check this line</span></div>
+                      <textarea v-model="line.text" rows="2" maxlength="2000" :aria-label="'Edit lyric line '+(index+1)"></textarea>
+                      <small v-if="line.uncertain_words && line.uncertain_words.length" class="review-uncertain">Timing to check: {{line.uncertain_words.map(word=>word.text).join(', ')}}</small>
+                    </article>
+                  </div>
+                  <div class="review-actions"><span class="muted">{{reviewLines.length}} lines · Edits are included when you render.</span><button class="button button-primary button-large" :disabled="submitting||reviewLoading||reviewError" @click="renderReviewedLyrics">{{submitting?'Starting render…':'Render with reviewed lyrics'}} <span aria-hidden="true">→</span></button></div>
+                </section>
                 <div v-if="activeJob.status==='failed'" class="inline-error" role="alert"><strong>The video could not be created.</strong><p>{{activeJob.error}}</p><button class="button button-quiet" @click="activeJob=null">Review settings</button></div>
                 <template v-if="activeJob.status==='completed'">
                   <video class="rendered-video" :src="activeJob.preview_url" controls playsinline preload="metadata" aria-label="Preview your completed lyric video"></video>
-                  <div class="download-actions"><a class="button button-primary" :href="activeJob.download_url">â†“ Download MP4</a><a class="button button-quiet" :href="activeJob.review_url">View timing report</a><a v-if="lyricsMode==='auto'" class="button button-quiet" :href="activeJob.lyrics_url">Download timed lyrics</a></div>
-                  <p class="success-note"><span aria-hidden="true">âœ“</span> Video rendered and ready to download.</p>
+                  <div class="download-actions"><a class="button button-primary" :href="activeJob.download_url">↓ Download MP4</a><a class="button button-quiet" :href="activeJob.review_url">View timing report</a><a v-if="lyricsMode==='auto'" class="button button-quiet" :href="activeJob.lyrics_url">Download timed lyrics</a></div>
+                  <p class="success-note"><span aria-hidden="true">✓</span> Video rendered and ready to download.</p>
                 </template>
-                <div class="job-footer"><button class="button button-quiet" @click="newVideo">ï¼‹ Create another video</button><button class="button button-quiet" @click="navigate('projects')">Open saved projects</button></div>
+                <div class="job-footer"><button class="button button-quiet" @click="newVideo">＋ Create another video</button><button class="button button-quiet" @click="navigate('projects')">Open saved projects</button></div>
               </div>
             </div>
 
-            <div v-if="step<4" class="wizard-actions"><button v-if="step>1" class="button button-quiet" @click="step--">â† Back</button><span></span><button class="button button-primary" @click="continueStep">{{step===3?'Review export':'Continue'}} <span aria-hidden="true">â†’</span></button></div>
+            <div v-if="step<4" class="wizard-actions"><button v-if="step>1" class="button button-quiet" @click="step--">← Back</button><span></span><button class="button button-primary" @click="continueStep">{{step===3?'Review export':'Continue'}} <span aria-hidden="true">→</span></button></div>
           </section>
 
           <section v-if="view==='projects'" class="info-page" aria-labelledby="projects-title">
-            <div class="page-heading"><div><p class="eyebrow">YOUR WORKSPACE</p><h1 id="projects-title">Projects</h1><p class="page-subtitle">Pick up where you left off with your saved settings.</p></div><button class="button button-primary" @click="newVideo">ï¼‹ New video</button></div>
-            <div v-if="!projects.length" class="empty-state"><span class="empty-icon" aria-hidden="true">â–£</span><h2>Your next video starts here</h2><p>Save a project from the creator to keep its title, timing, and style for next time.</p><button class="button button-primary" @click="navigate('create')">Create a video</button></div>
-            <div v-else class="project-grid"><article v-for="project in projects" :key="project.id" class="project-card"><div class="project-art"><span class="brand-mark">â™«</span></div><div class="project-body"><div class="project-meta"><span class="project-tag">SAVED PROJECT</span><span class="muted">{{formatDate(project.updated_at)}}</span></div><h2>{{project.title}}</h2><p>{{project.settings.duration||40}}s Â· {{project.settings.size||'1080x1920'}} Â· {{styleName(project.settings.style)}}</p><div class="project-actions"><button class="button button-small button-primary" @click="loadProject(project)">Open project</button><button class="button button-small button-quiet danger-text" @click="deleteProject(project)">Delete</button></div></div></article></div>
-            <div v-if="jobs.length" class="job-history"><h2>Recent videos</h2><article v-for="job in jobs" :key="job.id" class="history-row"><span class="history-icon" aria-hidden="true">â™«</span><span class="history-title"><strong>{{job.title}}</strong><small>{{job.stage}} Â· {{formatDate(job.updated_at)}}</small></span><a v-if="job.status==='completed'" class="button button-small button-quiet" :href="job.download_url">Download</a><span v-else class="job-badge" :class="'badge-'+job.status">{{statusLabel(job.status)}}</span><button v-if="job.status!=='queued'&&job.status!=='running'" class="icon-button remove-button" @click="deleteJob(job)" :aria-label="'Delete '+job.title">Ã—</button></article></div>
+            <div class="page-heading"><div><p class="eyebrow">YOUR WORKSPACE</p><h1 id="projects-title">Projects</h1><p class="page-subtitle">Pick up where you left off with your saved settings.</p></div><button class="button button-primary" @click="newVideo">＋ New video</button></div>
+            <div v-if="!projects.length" class="empty-state"><span class="empty-icon" aria-hidden="true">▣</span><h2>Your next video starts here</h2><p>Save a project from the creator to keep its title, timing, and style for next time.</p><button class="button button-primary" @click="navigate('create')">Create a video</button></div>
+            <div v-else class="project-grid"><article v-for="project in projects" :key="project.id" class="project-card"><div class="project-art"><span class="brand-mark">♫</span></div><div class="project-body"><div class="project-meta"><span class="project-tag">SAVED PROJECT</span><span class="muted">{{formatDate(project.updated_at)}}</span></div><h2>{{project.title}}</h2><p>{{project.settings.duration||40}}s · {{project.settings.size||'1080x1920'}} · {{styleName(project.settings.style)}}</p><div class="project-actions"><button class="button button-small button-primary" @click="loadProject(project)">Open project</button><button class="button button-small button-quiet danger-text" @click="deleteProject(project)">Delete</button></div></div></article></div>
+            <div v-if="jobs.length" class="job-history"><h2>Recent videos</h2><article v-for="job in jobs" :key="job.id" class="history-row"><span class="history-icon" aria-hidden="true">♫</span><span class="history-title"><strong>{{job.title}}</strong><small>{{job.stage}} · {{formatDate(job.updated_at)}}</small></span><button v-if="job.status==='review'" class="button button-small button-primary" @click="openReview(job)">Review lyrics</button><a v-if="job.status==='completed'" class="button button-small button-quiet" :href="job.download_url">Download</a><span v-if="job.status!=='completed'&&job.status!=='review'" class="job-badge" :class="'badge-'+job.status">{{statusLabel(job.status)}}</span><button v-if="job.status!=='queued'&&job.status!=='running'" class="icon-button remove-button" @click="deleteJob(job)" :aria-label="'Delete '+job.title">×</button></article></div>
           </section>
 
           <section v-if="view==='templates'" class="info-page" aria-labelledby="templates-title">
             <div class="page-heading"><div><p class="eyebrow">MAKE IT YOURS</p><h1 id="templates-title">Video templates</h1><p class="page-subtitle">Start with a visual direction, then customize the song and timing.</p></div></div>
-            <div class="style-grid template-grid"><button v-for="style in styles" :key="style.id" class="style-card" @click="chooseTemplate(style.id)"><span class="style-preview" :class="'preview-'+style.id"><span class="preview-orb"></span><span class="preview-lines"><i></i><i></i></span></span><span class="style-copy"><strong>{{style.title}}</strong><small>{{style.description}}</small><span class="template-cta">Use this style â†’</span></span></button></div>
+            <div class="style-grid template-grid"><button v-for="style in styles" :key="style.id" class="style-card" @click="chooseTemplate(style.id)"><span class="style-preview" :class="'preview-'+style.id"><span class="preview-orb"></span><span class="preview-lines"><i></i><i></i></span></span><span class="style-copy"><strong>{{style.title}}</strong><small>{{style.description}}</small><span class="template-cta">Use this style →</span></span></button></div>
           </section>
 
           <section v-if="view==='settings'" class="info-page" aria-labelledby="settings-title">
             <div class="page-heading"><div><p class="eyebrow">PREFERENCES</p><h1 id="settings-title">Settings</h1><p class="page-subtitle">Set defaults for your next lyric video.</p></div></div>
-            <div class="panel settings-panel"><div class="settings-item"><div><strong>Default video length</strong><p>Pre-filled duration in the creation flow.</p></div><label class="input-with-unit"><input v-model.number="defaults.duration" type="number" min="2" max="600" aria-label="Default video length"><span>seconds</span></label></div><div class="settings-item"><div><strong>Default language</strong><p>Language hint for automatic transcription.</p></div><select v-model="defaults.language" class="select-control"><option value="">Auto-detect</option><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option><option value="fr">French</option></select></div><div class="settings-item"><div><strong>Romanize Hindi lyrics</strong><p>Display Hindi lyrics using Latin letters.</p></div><label class="switch"><input v-model="defaults.romanize" type="checkbox"><span></span></label></div><div class="settings-actions"><button class="button button-primary" @click="saveDefaults">Save preferences</button><span v-if="settingsSaved" class="success-note">âœ“ Saved on this device</span></div></div>
+            <div class="panel settings-panel"><div class="settings-item"><div><strong>Default video length</strong><p>Pre-filled duration in the creation flow.</p></div><label class="input-with-unit"><input v-model.number="defaults.duration" type="number" min="2" max="600" aria-label="Default video length"><span>seconds</span></label></div><div class="settings-item"><div><strong>Default language</strong><p>Language hint for automatic transcription.</p></div><select v-model="defaults.language" class="select-control"><option value="">Auto-detect</option><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option><option value="fr">French</option></select></div><div class="settings-item"><div><strong>Romanize Hindi lyrics</strong><p>Display Hindi lyrics using Latin letters.</p></div><label class="switch"><input v-model="defaults.romanize" type="checkbox"><span></span></label></div><div class="settings-actions"><button class="button button-primary" @click="saveDefaults">Save preferences</button><span v-if="settingsSaved" class="success-note">✓ Saved on this device</span></div></div>
           </section>
 
           <section v-if="view==='help'" class="info-page" aria-labelledby="help-title">
             <div class="page-heading"><div><p class="eyebrow">HERE TO HELP</p><h1 id="help-title">Help center</h1><p class="page-subtitle">A few quick answers to get your lyric video looking right.</p></div></div>
-            <div class="faq-list"><details open><summary>Can I make a video without a lyrics file?</summary><p>Yes. Choose Auto-detect and the video engine will transcribe the song and create a downloadable, editable LRC lyric draft. Singing can be hard to recognize, so check the draft before publishing.</p></details><details><summary>How do I get more accurate lyric timing?</summary><p>Automatic word timing is created from speech recognition. For exact timing, provide timestamped LRC lyrics. The downloadable review report includes the timing used for each line.</p></details><details><summary>Does the video cut or loop my song?</summary><p>No. The selected section plays continuously for the full requested duration. If the selected duration goes beyond the audio, the remaining part is silent.</p></details><details><summary>Where are my projects saved?</summary><p>Project settings are saved to the service and attached to your private browser session. Use the same browser on the same device to see them again.</p></details><details><summary>What files can I upload?</summary><p>MP3, WAV, M4A, AAC, FLAC, OGG, OPUS, WMA, and MP4 audio files up to 100 MB.</p></details></div>
+            <div class="faq-list"><details open><summary>Can I make a video without a lyrics file?</summary><p>Yes. Choose Auto-detect and the video engine will find matching catalog lyrics or transcribe the song. You can review and correct the words before the video renders. Singing can be hard to recognize, so listen to the marked words.</p></details><details><summary>How do I get more accurate lyric timing?</summary><p>Automatic word timing is created from speech recognition. For exact timing, provide timestamped LRC lyrics. The downloadable review report includes the timing used for each line.</p></details><details><summary>Does the video cut or loop my song?</summary><p>No. The selected section plays continuously for the full requested duration. If the selected duration goes beyond the audio, the remaining part is silent.</p></details><details><summary>Where are my projects saved?</summary><p>Project settings are saved to the service and attached to your private browser session. Use the same browser on the same device to see them again.</p></details><details><summary>What files can I upload?</summary><p>MP3, WAV, M4A, AAC, FLAC, OGG, OPUS, WMA, and MP4 audio files up to 100 MB.</p></details></div>
           </section>
 
-          <section v-if="view==='about'" class="info-page prose-page" aria-labelledby="about-title"><div class="page-heading"><div><p class="eyebrow">ABOUT THE STUDIO</p><h1 id="about-title">Songs deserve to be seen</h1><p class="page-subtitle">AI Lyrics Hero turns the words in your music into a video you can share.</p></div></div><div class="prose-card"><span class="large-brand-mark" aria-hidden="true">â™«</span><h2>Made for the feeling behind the lyrics</h2><p>AI Lyrics Hero is a browser-based lyric video studio. Add a song, create a first-pass transcript automatically or bring your own lyrics, and render a vertical video with timed words and moving visual styles.</p><p>The goal is to make the creative workflow approachable: no editing timeline to learn, no local video software to install, and an editable timing report alongside each finished video.</p><button class="button button-primary" @click="newVideo">Create your first video â†’</button></div></section>
+          <section v-if="view==='about'" class="info-page prose-page" aria-labelledby="about-title"><div class="page-heading"><div><p class="eyebrow">ABOUT THE STUDIO</p><h1 id="about-title">Songs deserve to be seen</h1><p class="page-subtitle">AI Lyrics Hero turns the words in your music into a video you can share.</p></div></div><div class="prose-card"><span class="large-brand-mark" aria-hidden="true">♫</span><h2>Made for the feeling behind the lyrics</h2><p>AI Lyrics Hero is a browser-based lyric video studio. Add a song, create a first-pass transcript automatically or bring your own lyrics, and render a vertical video with timed words and moving visual styles.</p><p>The goal is to make the creative workflow approachable: no editing timeline to learn, no local video software to install, and an editable timing report alongside each finished video.</p><button class="button button-primary" @click="newVideo">Create your first video →</button></div></section>
 
-          <section v-if="view==='services'" class="info-page" aria-labelledby="services-title"><div class="page-heading"><div><p class="eyebrow">WHAT YOU CAN DO</p><h1 id="services-title">A studio for every song</h1><p class="page-subtitle">From a first lyric draft to a finished vertical video.</p></div><button class="button button-primary" @click="newVideo">Start creating â†’</button></div><div class="feature-grid"><article class="feature-card"><span class="feature-icon purple" aria-hidden="true">â‡§</span><h2>Song to lyrics</h2><p>Automatic transcription creates an editable lyric draft from your audio, so you can begin without a text file.</p></article><article class="feature-card"><span class="feature-icon blue" aria-hidden="true">âˆ¿</span><h2>Word timing</h2><p>Match lyric lines to the recording, or provide LRC timestamps when you want to control the timing yourself.</p></article><article class="feature-card"><span class="feature-icon coral" aria-hidden="true">âœ¦</span><h2>Visual styles</h2><p>Choose clean captions, expressive hero words, animated night scenes, and portrait or landscape formats.</p></article><article class="feature-card"><span class="feature-icon green" aria-hidden="true">â†“</span><h2>Preview and export</h2><p>Watch the completed video in your browser and download the MP4 plus its timing review report.</p></article></div></section>
+          <section v-if="view==='services'" class="info-page" aria-labelledby="services-title"><div class="page-heading"><div><p class="eyebrow">WHAT YOU CAN DO</p><h1 id="services-title">A studio for every song</h1><p class="page-subtitle">From a first lyric draft to a finished vertical video.</p></div><button class="button button-primary" @click="newVideo">Start creating →</button></div><div class="feature-grid"><article class="feature-card"><span class="feature-icon purple" aria-hidden="true">⇧</span><h2>Song to lyrics</h2><p>Automatic transcription creates an editable lyric draft from your audio, so you can begin without a text file.</p></article><article class="feature-card"><span class="feature-icon blue" aria-hidden="true">∿</span><h2>Word timing</h2><p>Match lyric lines to the recording, or provide LRC timestamps when you want to control the timing yourself.</p></article><article class="feature-card"><span class="feature-icon coral" aria-hidden="true">✦</span><h2>Visual styles</h2><p>Choose clean captions, expressive hero words, animated night scenes, and portrait or landscape formats.</p></article><article class="feature-card"><span class="feature-icon green" aria-hidden="true">↓</span><h2>Preview and export</h2><p>Watch the completed video in your browser and download the MP4 plus its timing review report.</p></article></div></section>
 
-          <section v-if="view==='contact'" class="info-page" aria-labelledby="contact-title"><div class="page-heading"><div><p class="eyebrow">GET IN TOUCH</p><h1 id="contact-title">Contact</h1><p class="page-subtitle">Questions, ideas, or a timing issue? Send a note.</p></div></div><form class="panel contact-panel" @submit.prevent="sendContact"><label class="field"><span>Your name</span><input v-model.trim="contact.name" required maxlength="100" autocomplete="name" placeholder="Name"></label><label class="field"><span>Your email</span><input v-model.trim="contact.email" required maxlength="200" type="email" autocomplete="email" placeholder="you@example.com"></label><label class="field"><span>Subject</span><input v-model.trim="contact.subject" required maxlength="150" placeholder="How can we help?"></label><label class="field"><span>Message</span><textarea v-model.trim="contact.message" required maxlength="5000" rows="6" placeholder="Write your messageâ€¦"></textarea></label><div class="contact-submit"><button class="button button-primary" type="submit">Open email to send â†’</button><span class="muted">Messages go to {{contactEmail}}</span></div><p class="muted small-print">Your device will open its email app with this message ready to send.</p></form></section>
+          <section v-if="view==='contact'" class="info-page" aria-labelledby="contact-title"><div class="page-heading"><div><p class="eyebrow">GET IN TOUCH</p><h1 id="contact-title">Contact</h1><p class="page-subtitle">Questions, ideas, or a timing issue? Send a note.</p></div></div><form class="panel contact-panel" @submit.prevent="sendContact"><label class="field"><span>Your name</span><input v-model.trim="contact.name" required maxlength="100" autocomplete="name" placeholder="Name"></label><label class="field"><span>Your email</span><input v-model.trim="contact.email" required maxlength="200" type="email" autocomplete="email" placeholder="you@example.com"></label><label class="field"><span>Subject</span><input v-model.trim="contact.subject" required maxlength="150" placeholder="How can we help?"></label><label class="field"><span>Message</span><textarea v-model.trim="contact.message" required maxlength="5000" rows="6" placeholder="Write your message…"></textarea></label><div class="contact-submit"><button class="button button-primary" type="submit">Open email to send →</button><span class="muted">Messages go to {{contactEmail}}</span></div><p class="muted small-print">Your device will open its email app with this message ready to send.</p></form></section>
         </main>
 
-        <footer class="footer"><span>Â© 2026 AI Lyrics Hero</span><div><a href="/about" @click.prevent="navigate('about')">About</a><a href="/services" @click.prevent="navigate('services')">Services</a><a href="/contact" @click.prevent="navigate('contact')">Contact</a></div></footer>
+        <footer class="footer"><span>© 2026 AI Lyrics Hero</span><div><a href="/about" @click.prevent="navigate('about')">About</a><a href="/services" @click.prevent="navigate('services')">Services</a><a href="/contact" @click.prevent="navigate('contact')">Contact</a></div></footer>
       </div>
       <div v-if="toast" class="toast" :class="{'toast-error':toastType==='error'}" role="status">{{toast}}</div>
     </div>
@@ -214,4 +232,3 @@
   <script src="/assets/app.js" defer></script>
 </body>
 </html>
-

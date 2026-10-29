@@ -35,6 +35,11 @@
         lyricsText: '',
         submitting: false,
         activeJob: null,
+        reviewLines: [],
+        reviewSource: null,
+        reviewLoadedFor: null,
+        reviewLoading: false,
+        reviewError: '',
         pollTimer: null,
         projects: [],
         jobs: [],
@@ -69,10 +74,10 @@
           { id: 'contact', label: 'Contact', icon: '✉', href: '/contact' },
         ],
         styles: [
-          { id: 'scene-hero', title: 'Scene Hero', description: 'Dreamy moving scenes with expressive hero words.' },
-          { id: 'scene', title: 'Night Scenes', description: 'Atmospheric backgrounds with clear lyric captions.' },
-          { id: 'hero', title: 'Hero Words', description: 'Bold typography and a pulsing music visualizer.' },
-          { id: 'classic', title: 'Classic', description: 'Bright geometric backgrounds and glowing lyrics.' },
+          { id: 'scene-hero', title: 'Scene Hero', description: 'Song-colored moving scenes with expressive hero words.' },
+          { id: 'scene', title: 'Night Scenes', description: 'Song-colored atmosphere with clear lyric captions.' },
+          { id: 'hero', title: 'Hero Words', description: 'Song-colored backgrounds, bold type, and a pulsing music visualizer.' },
+          { id: 'classic', title: 'Classic', description: 'Song-colored geometric backgrounds and glowing lyrics.' },
         ],
       };
     },
@@ -179,6 +184,10 @@
         if (!this.audioFile || this.submitting) return;
         this.submitting = true;
         this.activeJob = null;
+        this.reviewLines = [];
+        this.reviewSource = null;
+        this.reviewLoadedFor = null;
+        this.reviewError = '';
         const [width, height] = this.options.size.split('x').map(Number);
         const form = new FormData();
         form.append('audio', this.audioFile, this.audioFile.name);
@@ -192,6 +201,7 @@
         form.append('size', `${width}x${height}`);
         form.append('fps', String(this.options.fps));
         form.append('model', 'medium');
+        form.append('review_lyrics', 'true');
         form.append('track_title', this.options.trackTitle || '');
         form.append('artist', this.options.artist || '');
         form.append('lyrics_lookup', String(this.options.lyricsLookup));
@@ -200,7 +210,7 @@
           const result = await this.api('/api/jobs', { method: 'POST', body: form });
           this.activeJob = result.job;
           this.pollJob();
-          this.showToast('Your video is in the render queue.');
+          this.showToast('We’re preparing the lyrics for your review.');
         } catch (error) { this.showToast(error.message, 'error'); }
         finally { this.submitting = false; }
       },
@@ -209,7 +219,12 @@
         try {
           const data = await this.api(`/api/jobs/${this.activeJob.id}`);
           this.activeJob = data.job;
-          if (this.activeJob.status === 'completed' || this.activeJob.status === 'failed') {
+          if (this.activeJob.status === 'review') {
+            if (this.reviewLoadedFor !== this.activeJob.id) await this.loadReviewDraft(this.activeJob);
+            if (this.pollTimer) clearTimeout(this.pollTimer);
+            this.pollTimer = null;
+            await this.refreshJobs();
+          } else if (this.activeJob.status === 'completed' || this.activeJob.status === 'failed') {
             if (this.pollTimer) clearTimeout(this.pollTimer);
             this.pollTimer = null;
             await this.refreshJobs();
@@ -220,6 +235,64 @@
           this.showToast(error.message || 'Lost connection while checking the video.', 'error');
           this.pollTimer = setTimeout(() => this.pollJob(), 3000);
         }
+      },
+      async loadReviewDraft(job) {
+        this.reviewLoading = true;
+        this.reviewError = '';
+        this.reviewLines = [];
+        this.reviewSource = null;
+        try {
+          const data = await this.api(`/api/jobs/${job.id}/draft`);
+          this.reviewLines = data.lines.map((line) => ({ ...line, text: line.text || '' }));
+          this.reviewSource = data.lyrics_source || {};
+          this.reviewLoadedFor = job.id;
+        } catch (error) {
+          this.reviewError = error.message || 'Could not load the lyric draft.';
+          this.showToast(this.reviewError, 'error');
+        } finally { this.reviewLoading = false; }
+      },
+      async openReview(job) {
+        this.activeJob = job;
+        this.navigate('create');
+        this.step = 4;
+        if (this.reviewLoadedFor !== job.id) await this.loadReviewDraft(job);
+      },
+      async renderReviewedLyrics() {
+        if (!this.activeJob || this.activeJob.status !== 'review' || this.submitting) return;
+        if (!this.reviewLines.some((line) => line.text.trim())) {
+          this.showToast('Keep at least one lyric line before rendering.', 'error');
+          return;
+        }
+        this.submitting = true;
+        try {
+          const data = await this.api(`/api/jobs/${this.activeJob.id}/render`, {
+            method: 'POST', body: JSON.stringify({ lines: this.reviewLines.map((line) => line.text) }),
+          });
+          this.activeJob = data.job;
+          this.reviewLoadedFor = data.job.id;
+          this.pollJob();
+          this.showToast('Your reviewed lyrics are queued for rendering.');
+        } catch (error) { this.showToast(error.message || 'Could not start rendering.', 'error'); }
+        finally { this.submitting = false; }
+      },
+      lyricSourceLabel() {
+        if (this.reviewSource?.provider === 'LRCLIB') {
+          const track = [this.reviewSource.track_name, this.reviewSource.artist_name].filter(Boolean).join(' — ');
+          return track ? `Catalog lyrics: ${track}` : 'Lyrics from the LRCLIB community catalog';
+        }
+        if (this.reviewSource?.provider === 'speech_recognition') return 'Automatic speech-recognition draft';
+        if (this.reviewSource?.provider === 'user') return 'Lyrics you provided';
+        return 'Lyrics prepared from your song';
+      },
+      formatSongTime(value) {
+        const seconds = Math.max(0, Math.floor(Number(value) || 0));
+        return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+      },
+      playFrom(value) {
+        const player = this.$refs.reviewAudio;
+        if (!player) return;
+        player.currentTime = Math.max(0, Number(value) || 0);
+        player.play().catch(() => {});
       },
       styleName(style) { return this.styles.find((item) => item.id === style)?.title || 'Scene Hero'; },
       async saveProject() {
@@ -248,6 +321,10 @@
         this.lyricsFormat = settings.lyricsFormat || 'plain';
         this.projectId = project.id;
         this.activeJob = null;
+        this.reviewLines = [];
+        this.reviewSource = null;
+        this.reviewLoadedFor = null;
+        this.reviewError = '';
         this.step = 1;
         this.navigate('create');
         this.showToast('Project settings loaded. Add the song to continue.');
@@ -271,6 +348,10 @@
         if (this.pollTimer) clearTimeout(this.pollTimer);
         this.pollTimer = null;
         this.activeJob = null;
+        this.reviewLines = [];
+        this.reviewSource = null;
+        this.reviewLoadedFor = null;
+        this.reviewError = '';
         this.projectId = null;
         this.step = 1;
         this.lyricsMode = 'auto';
@@ -301,7 +382,7 @@
         const date = new Date(value);
         return Number.isNaN(date.valueOf()) ? '' : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(date);
       },
-      statusLabel(status) { return ({ queued: 'Queued', running: 'Rendering', completed: 'Ready', failed: 'Failed' })[status] || status; },
+      statusLabel(status) { return ({ queued: 'Queued', running: 'Rendering', review: 'Review lyrics', completed: 'Ready', failed: 'Failed' })[status] || status; },
       showToast(message, type = 'success') {
         this.toast = message;
         this.toastType = type;

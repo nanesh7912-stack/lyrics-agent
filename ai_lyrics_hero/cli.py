@@ -19,7 +19,7 @@ def _common_render_args(ap):
     ap.add_argument("--outro-audio", choices=["continue", "outro", "silent", "mix"],
                     help="audio under the outro: continue the song (default) | outro's own audio | silence | crossfade mix")
     ap.add_argument("--crossfade", type=float, help="seconds of crossfade for --outro-audio mix")
-    ap.add_argument("--seed", type=int, help="seed for reproducible visual choices")
+    ap.add_argument("--seed", type=int, help="fixed seed for reproducible visuals (default: choose a stable look from the song)")
     ap.add_argument("--asset-dir", help="folder with your own backgrounds (see assets/user/README.txt); separate several with ;")
     ap.add_argument("--beat-intensity", type=float, help="0 = no beat pulses/shake, 1 = default, 2 = strong")
     ap.add_argument("--llm", choices=["none", "openai"], help="optional AI scene analysis (needs AI_LYRICS_LLM_API_KEY)")

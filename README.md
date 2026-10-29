@@ -13,8 +13,8 @@ explicit audio policy, and a verified MP4. Pure Python (Pillow + numpy) + FFmpeg
 | **Outro audio policies** | `continue` song keeps playing under the outro (default) / `outro` its own audio / `silent` / `mix` crossfade | spectrum analysis of each policy's rendered audio |
 | **Music analysis** | energy curve, onsets, strong impacts, tempo + beat grid (autocorrelation), quiet/mid/high sections, silent-gap detection; deterministic fallback when audio is missing/sparse | `tests/test_music.py` |
 | **Kinetic typography** | presets: pop/overshoot, slide x4, rotate, wipe (mask), tracking, blur, typewriter chars, impact (+shake); animated glow; karaoke-style highlight in caption style; hero word chosen from length, emotional words, phrase position, sung duration, musical accent, repetition | `tests/test_director.py`, `test_animation.py` |
-| **Visual director** | per-line plan: scene, mood, camera zoom/pan, typography, composition (centered / offset / giant background word / minimal), transition, accent color; repeated lines reuse a motif; never 3 identical atmospheric scenes in a row; deterministic for a given seed | `tests/test_director.py` |
-| **Scenes (all procedural)** | moon, eye (blinks), heart+fire, rain, romance, city lights, road, sunset nature, galaxy, dream, stars, night waves, light streaks, plain sky; scenes during instrumental breaks (never invented lyrics) | frame inspection + tests |
+| **Visual director** | per-line plan: scene, mood, camera zoom/pan, typography, composition (centered / offset / giant background word / minimal), transition, accent color; repeated lines reuse a motif; never 3 identical atmospheric scenes in a row; stable per song by default, or by explicit seed | `tests/test_director.py` |
+| **Scenes (all procedural)** | moon, eye (blinks), heart+fire, rain, romance, city lights, road, sunset nature, galaxy, dream, stars, night waves, light streaks, plain sky; each song gets its own dark color theme; scenes during instrumental breaks (never invented lyrics) | frame inspection + tests |
 | **Transitions** | fade, zoom, slide, light wipe, flash cut; chosen from the music (cut on impacts, slower fades when quiet) | `tests/test_director.py` |
 | **Your own images** | `assets/user/backgrounds/<scene>/*.jpg\|png\|webp`, cover-crop, darkening, Ken-Burns, caching, safe loading | tests |
 | **Optional AI** | OpenAI-compatible LLM suggests scene/mood only for lines the dictionary can't match; strict validation; any failure -> local analysis | tests with mocked HTTP (never run against a real API) |
@@ -92,7 +92,7 @@ python -m ai_lyrics_hero make --audio ".\song.mp3" --lyrics ".\out\song.auto.lrc
 ### Options
 | Option | Meaning |
 |---|---|
-| `--style classic\|hero\|scene\|scene-hero` | look presets (classic = purple geometric + hero text; scene = night scenes + captions; scene-hero = scenes + hero text) |
+| `--style classic\|hero\|scene\|scene-hero` | look presets (classic = song-colored geometric + hero text; scene = song-colored night scenes + captions; scene-hero = scenes + hero text) |
 | `--size 1080x1920 --fps 30` | resolution / frame rate; web app supports up to 4K UHD (2160x3840 portrait or 3840x2160 landscape) |
 | `--target-duration S` | final length **including** the outro. `main = target - outro` |
 | `--outro FILE --outro-duration S` | outro clip; use only S seconds of it (default: all) |
@@ -101,7 +101,7 @@ python -m ai_lyrics_hero make --audio ".\song.mp3" --lyrics ".\out\song.auto.lrc
 | `--select-best` / `--keep-start` | force full-song selection / honor `--start`; with `--target-duration`, full-song selection is the default |
 | `--typography`, `--composition`, `--transitions` | force `pop\|slide\|rotate\|wipe\|tracking\|blur\|chars\|impact`, `centered\|offset\|bg_word\|minimal`, `fade\|zoom\|slide\|wipe\|cut` (default `auto`) |
 | `--beat-intensity 0..2` | beat pulses/shake (0 = off) |
-| `--seed N` | reproducible visual choices (same input + seed = same video) |
+| `--seed N` | fixed reproducible visual choices; by default the title, lyrics, and audio select a stable song-specific background and scene layout |
 | `--asset-dir DIR` | your own backgrounds (see `assets/user/README.txt`) |
 | `--llm openai` | optional AI scene analysis (needs `AI_LYRICS_LLM_API_KEY`, see `.env.example`) |
 | `--encoder auto\|libx264\|h264_qsv` | `auto` uses Intel QSV only if a real test encode succeeds, otherwise software x264 |
@@ -123,7 +123,7 @@ The finished file's video and audio durations are checked against the plan (vide
 
 ### Accuracy: what is and isn't guaranteed
 * **Spelling**: with a lyrics file, your text is shown exactly as written (case preserved; set `"uppercase": true` for caps).
-  Automatic mode first tries an exact title/artist/duration lookup in LRCLIB and uses its word-synced lyrics when available. Catalog text is community supplied and should still be checked. If there is no exact match, Faster-Whisper creates an unverified draft; no recognizer guarantees the spelling of sung words for every song. The default model is `medium` for better transcription quality, at the cost of longer processing and a larger download. Models are cached in a writable local cache; set `AI_LYRICS_HERO_MODEL_CACHE` to choose another writable folder.
+  Automatic mode first tries an exact title/artist/duration lookup in LRCLIB, then a constrained title/artist search for spelling variants and duet credits, while checking the recording duration. Word-synced catalog lyrics are used when available. Catalog text is community supplied and should still be checked. If no suitable catalog match is reachable, Faster-Whisper creates an unverified draft; no recognizer guarantees the spelling of sung words for every song. The default model is `medium` for better transcription quality, at the cost of longer processing and a larger download. Models are cached in a writable local cache; set `AI_LYRICS_HERO_MODEL_CACHE` to choose another writable folder.
 * **Timing** sources: word-synced catalog timing > speech word timestamps aligned to catalog/user lyrics > line-synced LRC with interpolated word timing > energy estimate (rough, flagged). Reports identify uncertain words and lines.
 * **Pictures/scenes** use exact dictionary matches (`scenes.json`, `lexicon.json`) so a word never gets an unrelated picture; ambiguous
   words (e.g. Hindi `sun` = listen) get nothing unless `--allow-ambiguous`. Unmatched lines get an abstract atmospheric scene.
@@ -159,12 +159,12 @@ requires the video to be within half a frame and the audio within 0.05 s (about 
 * **Intel QSV and the OpenAI-compatible LLM path were not tested on real hardware/services.**
 * Scenes are simple procedural vector art (not photographic); use your own images for cinematic backgrounds. Emoji pictures look soft when large.
 * Beat detection is heuristic (it reported 150 BPM for the sample song, possibly double-time); beats are only used for subtle accents.
-* The browser studio is a web interface over the same renderer. Automatic transcription still needs its model and singing transcripts should be reviewed.
+* The browser studio reviews and lets you correct lyrics before rendering. Automatic transcription still needs its model, and speech recognition cannot guarantee every sung word is correct.
 * Hero-word selection is rule-based, not a language model; force words with `[[word]]`.
 
 ## Browser app
 
-AI Lyrics Hero includes a responsive browser studio. It uploads a song to the Python service and looks up lyrics using only the title, artist, and duration (never the audio file). It uses word-synced catalog timing when available; otherwise a larger speech model aligns lyrics to the vocals, and unmatched songs receive an unverified draft. Projects and render history are stored in SQLite and scoped to a private browser session. Audio and output files are stored on the service host.
+AI Lyrics Hero includes a responsive browser studio. It uploads a song to the Python service and looks up lyrics using only the title, artist, and duration (never the audio file). It uses word-synced catalog timing when available; otherwise a larger speech model aligns lyrics to the vocals, and unmatched songs receive an unverified draft. Before rendering, the studio shows the timed lines, flags lines that need attention, and lets you correct the wording. Projects and render history are stored in SQLite and scoped to a private browser session. Audio and output files are stored on the service host.
 
 ### Run locally
 
@@ -200,4 +200,3 @@ The contact page opens a prefilled email to `nanesh7912@gmail.com` in the visito
 ### Testing the browser app
 
 Run `python -m pytest -q tests/test_webapp.py` for API, session, project, and job checks. Manually open the app at desktop and phone widths, test keyboard navigation and upload, create a short video, and verify the MP4, timing report, and automatic lyric draft. Use a browser device emulator for narrow screens, then test on a real phone and another browser before publishing.
-
