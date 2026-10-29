@@ -395,13 +395,18 @@ def create_app(test_config=None):
         if audio_path.stat().st_size > 100 * 1024 * 1024:
             shutil.rmtree(job_dir, ignore_errors=True)
             return jsonify(error="Audio files must be smaller than 100 MB."), 413
+        forced_model = os.environ.get("AI_LYRICS_HERO_FORCE_MODEL", "").strip().lower()
+        requested_model = payload.get("model")
+        selected_model = (forced_model if forced_model in {"tiny", "base", "small", "medium"}
+                          else requested_model if requested_model in {"tiny", "base", "small", "medium"}
+                          else "medium")
         settings = {
             "title": str(payload.get("title", "My lyric video")).strip()[:100] or "My lyric video",
             "style": style, "language": language or "",
             "romanize": payload.get("romanize", "false").lower() in {"true", "1", "on"},
             "auto_select": payload.get("auto_select", "true").lower() in {"true", "1", "on"},
             "start": start, "duration": duration, "fps": fps, "width": width, "height": height,
-            "model": payload.get("model", "medium") if payload.get("model") in {"tiny", "base", "small", "medium"} else "medium",
+            "model": selected_model,
             "track_title": str(payload.get("track_title", "")).strip()[:200],
             "artist": str(payload.get("artist", "")).strip()[:200],
             "lyrics_lookup": payload.get("lyrics_lookup", "true").lower() in {"true", "1", "on"},
@@ -488,3 +493,4 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main()
+
