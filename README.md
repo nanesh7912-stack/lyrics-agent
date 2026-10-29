@@ -189,10 +189,11 @@ API writes require the `X-CSRF-Token` returned by `/api/session`. Jobs, projects
 
 ### Deploy the full app
 
-GitHub Pages can host static files, but it cannot run Python, FFmpeg, transcription, or the SQLite API. This repository includes a Render Blueprint at `ai_lyrics_hero/render.yaml` for the full app. In Render, connect this repository as a Blueprint and select that file as the Blueprint path. Review the service plan before creating it. The configuration uses a 4 GB web service and a 5 GB persistent disk because the app stores projects and model files and runs video renders. These resources are paid; create the service only if the displayed cost is acceptable to you. The Blueprint generates a private session key and enables secure cookies automatically. After deployment, check `/api/health` and use the Render service URL on a phone, tablet, or computer.
+GitHub Pages can host static files, but it cannot run Python, FFmpeg, transcription, or the SQLite API. This repository includes a Render Blueprint at `ai_lyrics_hero/render.yaml` for a free-tier trial of the full app. In Render, connect this repository as a Blueprint and select that file as the Blueprint path. The Blueprint uses temporary storage and the tiny speech model to fit the free service's limits; projects and cached models can disappear when Render restarts the service, and video generation may be slow or fail on larger songs. Use the free service to preview the app. For sustained use and higher-quality transcription, upgrade to a paid service with persistent storage and more memory. The Blueprint generates a private session key and enables secure cookies automatically. After deployment, check `/api/health` and open the Render service URL on a phone, tablet, or computer.
 
 The contact page opens a prefilled email to `nanesh7912@gmail.com` in the visitor's email app. The visitor still needs an email app or webmail handler configured.
 
 ### Testing the browser app
 
 Run `python -m pytest -q tests/test_webapp.py` for API, session, project, and job checks. Manually open the app at desktop and phone widths, test keyboard navigation and upload, create a short video, and verify the MP4, timing report, and automatic lyric draft. Use a browser device emulator for narrow screens, then test on a real phone and another browser before publishing.
+
