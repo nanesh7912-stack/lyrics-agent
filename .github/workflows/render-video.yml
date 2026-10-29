@@ -1,0 +1,216 @@
+name: Render lyric video on GitHub
+
+on:
+  workflow_dispatch:
+    inputs:
+      audio_file:
+        description: "Audio file path in this private repository, for example incoming/song.mp3"
+        required: true
+        type: string
+      lyrics_file:
+        description: "Optional text/LRC file path under incoming/, for example incoming/song.lrc"
+        required: false
+        type: string
+      title:
+        description: "Optional song title"
+        required: false
+        type: string
+      artist:
+        description: "Optional artist name"
+        required: false
+        type: string
+      language:
+        description: "Speech language code; leave blank for auto-detection"
+        required: false
+        type: string
+      model:
+        description: "Larger models usually transcribe better but take longer"
+        required: true
+        default: small
+        type: choice
+        options:
+          - tiny
+          - small
+          - medium
+      use_lyric_catalog:
+        description: "Search LRCLIB for a matching lyric entry (contacts LRCLIB)"
+        required: true
+        default: false
+        type: boolean
+      romanize:
+        description: "Render Hindi lyrics in Latin letters when possible"
+        required: true
+        default: false
+        type: boolean
+      style:
+        description: "Visual style"
+        required: true
+        default: scene-hero
+        type: choice
+        options:
+          - classic
+          - hero
+          - scene
+          - scene-hero
+      size:
+        description: "Output resolution"
+        required: true
+        default: 1080x1920
+        type: choice
+        options:
+          - 720x1280
+          - 1080x1920
+          - 2160x3840
+      fps:
+        description: "Frames per second"
+        required: true
+        default: "30"
+        type: choice
+        options:
+          - "24"
+          - "30"
+      target_seconds:
+        description: "Optional final duration in seconds; use 0 for the full song"
+        required: false
+        default: "0"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    name: Build video
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Require a private repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          is_private="$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.private')"
+          if [[ "$is_private" != "true" ]]; then
+            echo "::error::This workflow handles song files, so the repository must be private. Make it private before uploading audio."
+            exit 1
+          fi
+
+      - name: Check out project
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install FFmpeg and fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg fonts-dejavu-core fonts-freefont-ttf fonts-noto-color-emoji
+
+      - name: Cache speech model
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/lyrics-hero-model-cache
+          key: faster-whisper-${{ runner.os }}-${{ inputs.model }}
+
+      - name: Install Python packages
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Render
+        env:
+          AUDIO_FILE: ${{ inputs.audio_file }}
+          LYRICS_FILE: ${{ inputs.lyrics_file }}
+          SONG_TITLE: ${{ inputs.title }}
+          ARTIST: ${{ inputs.artist }}
+          LANGUAGE: ${{ inputs.language }}
+          MODEL: ${{ inputs.model }}
+          USE_LYRIC_CATALOG: ${{ inputs.use_lyric_catalog }}
+          ROMANIZE: ${{ inputs.romanize }}
+          STYLE: ${{ inputs.style }}
+          SIZE: ${{ inputs.size }}
+          FPS: ${{ inputs.fps }}
+          TARGET_SECONDS: ${{ inputs.target_seconds }}
+          AI_LYRICS_HERO_MODEL_CACHE: ${{ runner.temp }}/lyrics-hero-model-cache
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          root = Path(os.environ["GITHUB_WORKSPACE"]).resolve()
+          incoming = (root / "incoming").resolve()
+
+          def safe_input(raw, label, required=False):
+              raw = (raw or "").strip()
+              if not raw:
+                  if required:
+                      raise SystemExit(f"{label} is required.")
+                  return None
+              candidate = Path(raw)
+              if not candidate.is_absolute():
+                  candidate = root / candidate
+              candidate = candidate.resolve()
+              if incoming not in candidate.parents:
+                  raise SystemExit(f"{label} must be a file inside incoming/.")
+              if not candidate.is_file():
+                  raise SystemExit(f"{label} was not found: {raw}")
+              return candidate
+
+          audio = safe_input(os.environ.get("AUDIO_FILE"), "Audio file", required=True)
+          if audio.suffix.lower() not in {".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", ".opus", ".wma", ".mp4"}:
+              raise SystemExit("Unsupported audio file type.")
+          if audio.stat().st_size > 100 * 1024 * 1024:
+              raise SystemExit("Audio files must be 100 MB or smaller.")
+
+          lyrics = safe_input(os.environ.get("LYRICS_FILE"), "Lyrics file")
+          if lyrics and lyrics.suffix.lower() not in {".txt", ".lrc"}:
+              raise SystemExit("Lyrics file must end in .txt or .lrc.")
+
+          title = (os.environ.get("SONG_TITLE") or "").strip() or audio.stem
+          slug = re.sub(r"[^A-Za-z0-9._-]+", "_", title).strip("._-") or "lyrics-video"
+          output_dir = Path(os.environ["RUNNER_TEMP"]) / "lyrics-hero-output"
+          output_dir.mkdir(parents=True, exist_ok=True)
+          output_file = output_dir / f"{slug}.mp4"
+
+          command = [
+              sys.executable, "-m", "ai_lyrics_hero", "make",
+              "--audio", str(audio),
+              "--out", str(output_file),
+              "--size", os.environ["SIZE"],
+              "--fps", os.environ["FPS"],
+              "--model", os.environ["MODEL"],
+              "--style", os.environ["STYLE"],
+          ]
+          if lyrics:
+              command.extend(["--lyrics", str(lyrics)])
+          if os.environ.get("LANGUAGE", "").strip():
+              command.extend(["--language", os.environ["LANGUAGE"].strip()])
+          if os.environ.get("ARTIST", "").strip():
+              command.extend(["--artist", os.environ["ARTIST"].strip()])
+          if os.environ.get("SONG_TITLE", "").strip():
+              command.extend(["--track-title", title])
+          if os.environ.get("TARGET_SECONDS", "0").strip() not in {"", "0"}:
+              command.extend(["--target-duration", os.environ["TARGET_SECONDS"].strip()])
+          if os.environ.get("ROMANIZE", "").lower() == "true":
+              command.append("--romanize")
+          if os.environ.get("USE_LYRIC_CATALOG", "").lower() != "true":
+              command.append("--no-lyrics-lookup")
+
+          subprocess.run(command, cwd=root, check=True)
+          print(f"Video and review files are ready in {output_dir}")
+
+      - name: Save video and lyric review as a downloadable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lyric-video-${{ github.run_number }}
+          path: ${{ runner.temp }}/lyrics-hero-output/
+          if-no-files-found: error
+          retention-days: 30
