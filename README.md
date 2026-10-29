@@ -65,6 +65,10 @@ python -m ai_lyrics_hero make --audio ".\song.mp3" --out ".\out\song.mp4" `
 python -m ai_lyrics_hero make --audio ".\song.mp3" --out ".\out\song_best.mp4" `
     --language hi --romanize --style scene-hero --target-duration 40
 
+# Render a 40-second 4K portrait video (4K landscape: --size 3840x2160)
+python -m ai_lyrics_hero make --audio ".\song.mp3" --out ".\out\song_4k.mp4" `
+    --language hi --romanize --style scene-hero --target-duration 40 --size 2160x3840 --fps 30
+
 # Supply exact track details when the filename is not "Title - Artist.mp3"
 python -m ai_lyrics_hero make --audio ".\song.mp3" --track-title "Song Title" --artist "Artist Name" `
     --out ".\out\song.mp4"
@@ -89,7 +93,7 @@ python -m ai_lyrics_hero make --audio ".\song.mp3" --lyrics ".\out\song.auto.lrc
 | Option | Meaning |
 |---|---|
 | `--style classic\|hero\|scene\|scene-hero` | look presets (classic = purple geometric + hero text; scene = night scenes + captions; scene-hero = scenes + hero text) |
-| `--size 1080x1920 --fps 30` | resolution / frame rate (any size; default portrait) |
+| `--size 1080x1920 --fps 30` | resolution / frame rate; web app supports up to 4K UHD (2160x3840 portrait or 3840x2160 landscape) |
 | `--target-duration S` | final length **including** the outro. `main = target - outro` |
 | `--outro FILE --outro-duration S` | outro clip; use only S seconds of it (default: all) |
 | `--outro-audio continue\|outro\|silent\|mix` `--crossfade S` | audio under the outro (see below) |
@@ -189,7 +193,7 @@ API writes require the `X-CSRF-Token` returned by `/api/session`. Jobs, projects
 
 ### Deploy the full app
 
-GitHub Pages can host static files, but it cannot run Python, FFmpeg, transcription, or the SQLite API. This repository includes a Render Blueprint at `ai_lyrics_hero/render.yaml` for a free-tier trial of the full app. In Render, connect this repository as a Blueprint and select that file as the Blueprint path. The Blueprint uses temporary storage and the tiny speech model to fit the free service's limits; projects and cached models can disappear when Render restarts the service, and video generation may be slow or fail on larger songs. Use the free service to preview the app. For sustained use and higher-quality transcription, upgrade to a paid service with persistent storage and more memory. The Blueprint generates a private session key and enables secure cookies automatically. After deployment, check `/api/health` and open the Render service URL on a phone, tablet, or computer.
+GitHub Pages can host static files, but it cannot run Python, FFmpeg, transcription, or the SQLite API. This repository includes a Render Blueprint at `ai_lyrics_hero/render.yaml` for a free-tier trial of the full app. In Render, connect this repository as a Blueprint and select that file as the Blueprint path. The Blueprint uses temporary storage and the tiny speech model to fit the free service's limits; projects and cached models can disappear when Render restarts the service, and video generation may be slow or fail on larger songs. 4K output is supported, but it needs substantially more memory and processing time; use a capable local computer or a larger paid service for dependable 4K renders. Use the free service to preview the app. For sustained use and higher-quality transcription, upgrade to a paid service with persistent storage and more memory. The Blueprint generates a private session key and enables secure cookies automatically. After deployment, check `/api/health` and open the Render service URL on a phone, tablet, or computer.
 
 The contact page opens a prefilled email to `nanesh7912@gmail.com` in the visitor's email app. The visitor still needs an email app or webmail handler configured.
 
