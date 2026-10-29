@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hmac
 import json
+import math
 import os
 import re
 import secrets
@@ -40,6 +41,48 @@ def _json_object(value, label):
     if len(json.dumps(value, ensure_ascii=False)) > 128_000:
         raise ValueError(f"{label} is too large")
     return value
+
+
+def _lrc_timestamp(seconds):
+    total = max(0, int(round(float(seconds) * 100)))
+    minutes, remainder = divmod(total, 6000)
+    whole_seconds, centiseconds = divmod(remainder, 100)
+    return f"{minutes:02d}:{whole_seconds:02d}.{centiseconds:02d}"
+
+
+def _edited_lrc(lines, edited_texts):
+    """Build trusted timed LRC from edited words and the server's reviewed timings."""
+    if len(lines) != len(edited_texts):
+        raise ValueError("The lyric list changed while the review was open. Reload the draft and try again.")
+    rows = []
+    for line, raw_text in zip(lines, edited_texts):
+        text = " ".join(str(raw_text or "").split())
+        if not text:
+            continue
+        tokens = text.split()
+        word_times = line.get("words") or []
+        keep_word_times = len(word_times) == len(tokens)
+        if keep_word_times:
+            for word in word_times:
+                try:
+                    keep_word_times = (math.isfinite(float(word["start"]))
+                                       and math.isfinite(float(word["end"]))
+                                       and float(word["end"]) > float(word["start"]))
+                except (KeyError, TypeError, ValueError):
+                    keep_word_times = False
+                if not keep_word_times:
+                    break
+        if keep_word_times:
+            body = " ".join(
+                f"<{_lrc_timestamp(word['start'])},{_lrc_timestamp(word['end'])}>{token}"
+                for token, word in zip(tokens, word_times)
+            )
+        else:
+            body = text  # make_ass will align changed word counts against the vocals again
+        rows.append(f"[{_lrc_timestamp(line.get('start', 0.0))}]{body}")
+    if not rows:
+        raise ValueError("Keep at least one lyric line before rendering.")
+    return "\n".join(rows) + "\n"
 
 
 def _connect(path):
@@ -217,6 +260,9 @@ def create_app(test_config=None):
                         preview_url=f"/api/jobs/{row['id']}/download?inline=1",
                         review_url=f"/api/jobs/{row['id']}/review",
                         lyrics_url=f"/api/jobs/{row['id']}/lyrics")
+        elif row["status"] == "review":
+            item.update(draft_url=f"/api/jobs/{row['id']}/draft",
+                        audio_url=f"/api/jobs/{row['id']}/audio")
         return item
 
     def owned_project(project_id):
@@ -235,6 +281,11 @@ def create_app(test_config=None):
             abort(404)
         return row
 
+    def job_audio_path(row):
+        job_dir = Path(row["work_dir"]).resolve()
+        return next((path for path in job_dir.glob("source.*")
+                     if path.is_file() and path.resolve().parent == job_dir), None)
+
     def update_job(job_id, **fields):
         fields["updated_at"] = _now()
         allowed = {"status", "stage", "progress", "error", "updated_at"}
@@ -245,39 +296,86 @@ def create_app(test_config=None):
 
     def run_job(job_id, audio_path, lyrics_text, settings):
         with app.app_context():
-            stage = ("Analyzing the full song and selecting its best lyric section"
-                     if settings.get("auto_select") else "Preparing audio and lyrics")
+            stage = ("Finding lyrics and timing the words" if settings.get("review_lyrics")
+                     else "Preparing audio and lyrics")
             update_job(job_id, status="running", stage=stage, progress=0.01)
             try:
-                from .workflow import make_video
-
                 style = settings["style"]
                 config_data = dict(STYLE_PRESETS[style])
+                config_data.update(title=settings["title"], target_duration=settings["duration"])
+                config = HeroConfig.from_dict(config_data)
+                output_path = Path(settings["output_path"])
+                if settings.get("review_lyrics"):
+                    from .workflow import make_ass
+
+                    report = make_ass(
+                        audio_path, str(output_path.with_suffix(".ass")), lyrics_text or None,
+                        language=settings["language"] or None, use_asr=True, model_size=settings["model"],
+                        cfg=config, romanize=settings["romanize"], track_title=settings["track_title"],
+                        artist=settings["artist"], lyrics_lookup=settings["lyrics_lookup"],
+                    )
+                    if not report.get("lines"):
+                        raise RuntimeError("No lyric lines were prepared for review.")
+                    update_job(job_id, status="review", stage="Review lyrics before rendering", progress=0.45, error="")
+                else:
+                    from .workflow import make_video
+
+                    def progress(value):
+                        update_job(job_id, status="running", stage="Rendering video",
+                                   progress=max(0.02, min(0.98, float(value))))
+
+                    report = make_video(
+                        audio_path, str(output_path), lyrics_text or None, config,
+                        size=(settings["width"], settings["height"]), fps=settings["fps"],
+                        start=settings["start"], end=None, encoder="auto", language=settings["language"] or None,
+                        use_asr=True, model_size=settings["model"], progress=progress,
+                        romanize=settings["romanize"], auto_select=settings["auto_select"],
+                        track_title=settings["track_title"], artist=settings["artist"],
+                        lyrics_lookup=settings["lyrics_lookup"],
+                    )
+                    auto_lyrics = report.get("auto_lyrics")
+                    if auto_lyrics:
+                        report["auto_lyrics"] = Path(auto_lyrics).name
+                    with _transaction(app.config["DATABASE"]) as conn:
+                        conn.execute("UPDATE jobs SET status='completed', stage='Video ready', progress=1, error='', updated_at=? WHERE id=?",
+                                     (_now(), job_id))
+            except Exception as exc:
+                failed_stage = "Could not prepare lyrics" if settings.get("review_lyrics") else "Could not finish the video"
+                update_job(job_id, status="failed", stage=failed_stage, error=str(exc)[:1200])
+
+    def render_reviewed_job(job_id, audio_path, lyrics_text, settings):
+        with app.app_context():
+            update_job(job_id, status="running", stage="Rendering video with reviewed lyrics", progress=0.5)
+            try:
+                from .workflow import make_video, write_review
+
+                config_data = dict(STYLE_PRESETS[settings["style"]])
                 config_data.update(title=settings["title"], target_duration=settings["duration"])
                 config = HeroConfig.from_dict(config_data)
                 output_path = Path(settings["output_path"])
 
                 def progress(value):
                     update_job(job_id, status="running", stage="Rendering video",
-                               progress=max(0.02, min(0.98, float(value))))
+                               progress=max(0.5, min(0.98, 0.5 + 0.48 * float(value))))
 
                 report = make_video(
-                    audio_path, str(output_path), lyrics_text or None, config,
+                    audio_path, str(output_path), lyrics_text, config,
                     size=(settings["width"], settings["height"]), fps=settings["fps"],
                     start=settings["start"], end=None, encoder="auto", language=settings["language"] or None,
                     use_asr=True, model_size=settings["model"], progress=progress,
                     romanize=settings["romanize"], auto_select=settings["auto_select"],
-                    track_title=settings["track_title"], artist=settings["artist"],
-                    lyrics_lookup=settings["lyrics_lookup"],
+                    track_title=settings["track_title"], artist=settings["artist"], lyrics_lookup=False,
                 )
-                # Store the report without machine-specific absolute paths.
-                auto_lyrics = report.get("auto_lyrics")
-                if auto_lyrics:
-                    report["auto_lyrics"] = Path(auto_lyrics).name
+                lyrics_path = output_path.with_suffix(".auto.lrc")
+                lyrics_path.write_text(
+                    _edited_lrc(report["lines"], [line["text"] for line in report["lines"]]),
+                    encoding="utf-8",
+                )
+                report["auto_lyrics"] = lyrics_path.name
+                write_review(report, str(output_path.with_suffix(".ass")))
                 with _transaction(app.config["DATABASE"]) as conn:
                     conn.execute("UPDATE jobs SET status='completed', stage='Video ready', progress=1, error='', updated_at=? WHERE id=?",
                                  (_now(), job_id))
-                return report
             except Exception as exc:
                 update_job(job_id, status="failed", stage="Could not finish the video", error=str(exc)[:1200])
 
@@ -409,6 +507,7 @@ def create_app(test_config=None):
             "auto_select": payload.get("auto_select", "true").lower() in {"true", "1", "on"},
             "start": start, "duration": duration, "fps": fps, "width": width, "height": height,
             "model": selected_model,
+            "review_lyrics": payload.get("review_lyrics", "false").lower() in {"true", "1", "on"},
             "track_title": str(payload.get("track_title", "")).strip()[:200],
             "artist": str(payload.get("artist", "")).strip()[:200],
             "lyrics_lookup": payload.get("lyrics_lookup", "true").lower() in {"true", "1", "on"},
@@ -428,6 +527,82 @@ def create_app(test_config=None):
     @app.get("/api/jobs/<job_id>")
     def job_item(job_id):
         return jsonify(job=row_to_job(owned_job(job_id)))
+
+    @app.get("/api/jobs/<job_id>/draft")
+    def job_lyrics_draft(job_id):
+        row = owned_job(job_id)
+        if row["status"] != "review":
+            abort(404)
+        path = Path(row["output_path"]).with_suffix(".review.json")
+        try:
+            report = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return jsonify(error="The lyric draft could not be loaded. Start a new video and try again."), 409
+        fields = ("index", "start", "end", "text", "needs_review", "confidence", "notes", "uncertain_words", "words")
+        lines = [{key: line.get(key) for key in fields} for line in report.get("lines", [])]
+        source = report.get("lyrics_source") or {}
+        source = {key: source[key] for key in ("provider", "kind", "track_name", "artist_name") if key in source}
+        return jsonify(lines=lines, lyrics_source=source)
+
+    @app.get("/api/jobs/<job_id>/audio")
+    def review_job_audio(job_id):
+        row = owned_job(job_id)
+        if row["status"] != "review":
+            abort(404)
+        path = job_audio_path(row)
+        if path is None:
+            abort(404)
+        return send_file(path, conditional=True, max_age=0)
+
+    @app.post("/api/jobs/<job_id>/render")
+    def render_reviewed_lyrics(job_id):
+        row = owned_job(job_id)
+        if row["status"] != "review":
+            return jsonify(error="This lyric draft is no longer waiting for review."), 409
+        payload = request.get_json(silent=True) or {}
+        if not isinstance(payload, dict):
+            return jsonify(error="Send the edited lyric lines as an object."), 400
+        edited = payload.get("lines")
+        if not isinstance(edited, list):
+            return jsonify(error="Send the edited lyric lines to render this video."), 400
+        review_path = Path(row["output_path"]).with_suffix(".review.json")
+        try:
+            report = json.loads(review_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return jsonify(error="The lyric draft could not be loaded. Start a new video and try again."), 409
+        lines = report.get("lines") or []
+        if len(edited) != len(lines) or any(not isinstance(value, str) for value in edited):
+            return jsonify(error="The lyric list changed while the review was open. Reload the draft and try again."), 400
+        if sum(len(value) for value in edited) > 100_000 or any(len(value) > 2_000 for value in edited):
+            return jsonify(error="Keep the lyrics under 100,000 characters, with no line longer than 2,000 characters."), 400
+        try:
+            lyrics_text = _edited_lrc(lines, edited)
+        except (TypeError, ValueError) as exc:
+            return jsonify(error=str(exc)), 400
+
+        audio_path = job_audio_path(row)
+        if audio_path is None:
+            return jsonify(error="The uploaded song is missing. Start a new video and try again."), 409
+        settings = json.loads(row["settings"])
+        settings["output_path"] = row["output_path"]
+        Path(row["work_dir"], "reviewed-lyrics.lrc").write_text(lyrics_text, encoding="utf-8")
+        with lock:
+            active = db().execute("SELECT COUNT(*) FROM jobs WHERE status IN ('queued','running')").fetchone()[0]
+            if active >= 2:
+                return jsonify(error="The video queue is full. Wait for a video to finish, then try again."), 429
+            updated = db().execute(
+                "UPDATE jobs SET status='queued', stage='Queued for rendering', progress=0.45, error='', updated_at=? "
+                "WHERE id=? AND owner=? AND status='review'",
+                (_now(), job_id, owner_id()),
+            )
+            db().commit()
+            if updated.rowcount != 1:
+                return jsonify(error="This lyric draft is no longer waiting for review."), 409
+            app.extensions["lyrics_executor"].submit(
+                render_reviewed_job, job_id, str(audio_path), lyrics_text, settings
+            )
+        refreshed = db().execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
+        return jsonify(job=row_to_job(refreshed)), 202
 
     @app.delete("/api/jobs/<job_id>")
     def delete_job(job_id):
@@ -495,4 +670,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main()
-

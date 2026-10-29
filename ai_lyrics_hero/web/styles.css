@@ -189,6 +189,7 @@ h1 { margin-bottom: 8px; font: 800 clamp(24px, 2vw, 31px)/1.18 'Manrope', sans-s
 .job-badge { display: inline-flex; min-height: 24px; align-items: center; padding: 4px 9px; border: 1px solid #384761; border-radius: 20px; background: #182438; color: #bac6da; font-size: 10px; font-weight: 700; white-space: nowrap; }
 .badge-completed { border-color: #277456; background: #123526; color: #5ae3aa; }
 .badge-running { border-color: #4758a1; background: #1c2750; color: #adb9ff; }
+.badge-review { border-color: #856b3c; background: #322a1b; color: #f4d38a; }
 .badge-failed { border-color: #814054; background: #401c2d; color: #ff98a8; }
 .progress-section { max-width: 620px; margin: 50px auto 35px; }
 .progress-copy { display: flex; justify-content: space-between; margin-bottom: 10px; color: #d8e0ee; font-size: 12px; }
@@ -196,6 +197,24 @@ h1 { margin-bottom: 8px; font: 800 clamp(24px, 2vw, 31px)/1.18 'Manrope', sans-s
 .progress-track { height: 10px; overflow: hidden; border: 1px solid #293850; border-radius: 10px; background: #0a111d; }
 .progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #8b5cf6, #438afa); box-shadow: 0 0 15px #6085ff88; transition: width .5s ease; }
 .progress-section .muted { margin-top: 12px; }
+.lyrics-review { margin-top: 25px; }
+.review-intro { margin-bottom: 15px; padding: 15px 16px; border: 1px solid #38415d; border-radius: 10px; background: #171f34; }
+.review-intro h3 { margin: 0 0 7px; color: #edf1fb; font: 700 15px 'Manrope', sans-serif; }
+.review-intro p { margin: 5px 0 0; color: #aab7cc; font-size: 11px; line-height: 1.55; }
+.review-intro .review-tip { color: #e1c98f; }
+.review-audio { margin: 0 0 13px; padding: 12px 14px; border: 1px solid #293a54; border-radius: 9px; background: #0d1726; }
+.review-audio label { display: block; margin-bottom: 7px; color: #bbc7d9; font-size: 10px; font-weight: 600; }
+.review-audio audio { display: block; width: 100%; height: 36px; }
+.review-lines { display: flex; max-height: min(58vh, 650px); flex-direction: column; gap: 9px; overflow: auto; padding: 2px 4px 3px 0; }
+.review-line { padding: 11px; border: 1px solid #283a55; border-radius: 9px; background: #0d1726; }
+.review-line-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 7px; color: #9eacc2; font-size: 10px; }
+.review-time { padding: 0; border: 0; background: transparent; color: #aebdf7; cursor: pointer; font: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.review-line textarea { display: block; width: 100%; min-height: 46px; resize: vertical; padding: 10px; border: 1px solid #34425b; border-radius: 7px; background: #0a1220; color: #edf1fb; font: inherit; font-size: 12px; line-height: 1.55; }
+.review-line textarea:focus { border-color: #7488eb; outline: 2px solid #7488eb44; }
+.review-flag { color: #f0ca78; font-weight: 700; }
+.review-uncertain { display: block; margin-top: 6px; color: #e1bfa1; font-size: 10px; line-height: 1.45; }
+.review-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 15px; }
+.review-actions .button { flex: 0 0 auto; }
 .rendered-video { display: block; width: min(100%, 330px); max-height: 62vh; margin: 25px auto 18px; border: 1px solid #31415a; border-radius: 12px; background: black; }
 .download-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; }
 .success-note { color: #5de2ae; font-size: 11px; }
@@ -325,6 +344,8 @@ h1 { margin-bottom: 8px; font: 800 clamp(24px, 2vw, 31px)/1.18 'Manrope', sans-s
   .style-copy small { font-size: 9px; }
   .radio-dot { width: 13px; height: 13px; flex-basis: 13px; }
   .style-footer { align-items: flex-start; flex-direction: column; }
+  .review-actions { align-items: stretch; flex-direction: column; }
+  .review-actions .button { width: 100%; }
   .summary-row { gap: 10px; font-size: 10px; }
   .summary-row > span { flex-basis: 66px; }
   .project-grid { grid-template-columns: 1fr; }

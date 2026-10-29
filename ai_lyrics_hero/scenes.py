@@ -3,6 +3,8 @@
 Everything is drawn by code (no downloads). Scene choice is an EXACT word match against scenes.json;
 no match -> plain night sky; a line that repeats an earlier line -> light streaks."""
 import json
+import colorsys
+import hashlib
 import math
 import os
 import random
@@ -16,6 +18,17 @@ from .text_utils import normalize
 HERE = os.path.dirname(os.path.abspath(__file__))
 PRIORITY = ["heart_fire", "eye", "moon", "rain", "romance", "city", "road", "nature", "galaxy", "stars", "dream", "night"]
 SCENE_KINDS = PRIORITY + ["streaks", "sky"]
+
+
+def night_palette(seed):
+    """Return a dark, text-safe per-song gradient and a matching grid accent."""
+    digest = hashlib.blake2b(str(int(seed)).encode("ascii"), digest_size=8).digest()
+    hue = int.from_bytes(digest, "big") / float(1 << 64)
+
+    def rgb(lightness, saturation):
+        return tuple(round(channel * 255) for channel in colorsys.hls_to_rgb(hue, lightness, saturation))
+
+    return rgb(0.19, 0.58), rgb(0.055, 0.55), rgb(0.68, 0.62)
 
 
 class SceneLexicon:
@@ -117,7 +130,7 @@ def _heart_points(cx, cy, size, n=160):
 
 class SceneRenderer:
     def __init__(self, W, H, seed=5):
-        self.W, self.H = W, H
+        self.W, self.H, self.seed = W, H, seed
         rnd = random.Random(seed)
         self.static_base = self._make_base(rnd)
         self.stars = [(rnd.random() * W, rnd.random() * H * 0.9, rnd.uniform(0, 6.28), rnd.uniform(0.8, 2.2))
@@ -136,16 +149,17 @@ class SceneRenderer:
     # ---------- base sky ----------
     def _make_base(self, rnd):
         W, H = self.W, self.H
-        top, bot = np.array([13, 22, 58], np.float32), np.array([8, 13, 36], np.float32)
+        top_rgb, bot_rgb, grid = night_palette(self.seed)
+        top, bot = np.array(top_rgb, np.float32), np.array(bot_rgb, np.float32)
         k = (np.linspace(0, 1, H, dtype=np.float32) ** 0.9)[:, None, None]
         arr = np.repeat((top + (bot - top) * k), W, axis=1)
         img = Image.fromarray(arr.astype(np.uint8), "RGB")
         d = ImageDraw.Draw(img, "RGBA")
         step = max(40, W // 12)
         for x in range(0, W, step):
-            d.line([(x, 0), (x, H)], fill=(120, 140, 255, 9), width=1)
+            d.line([(x, 0), (x, H)], fill=(*grid, 9), width=1)
         for y in range(0, H, step):
-            d.line([(0, y), (W, y)], fill=(120, 140, 255, 9), width=1)
+            d.line([(0, y), (W, y)], fill=(*grid, 9), width=1)
         for _ in range(170):
             x, y = rnd.random() * W, rnd.random() * H
             r = rnd.choice([0.7, 1.0, 1.3])

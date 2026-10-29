@@ -1,4 +1,5 @@
 """Frame renderer: Video-A identity (title, geometric background, visualizer) + hero typography."""
+import hashlib
 import math
 import random
 from dataclasses import replace
@@ -10,14 +11,42 @@ from .hero import hero_color
 from .layout import compute_layout, TITLE_ZONE_BOTTOM, VIZ_ZONE_TOP
 from .image_anim import image_state
 from .caption import layout_caption, draw_caption
-from .scenes import SceneRenderer, apply_camera
+from .scenes import SceneRenderer, apply_camera, night_palette
 from .director import direct, Interlude
 from .transitions import blend
 from .layout import display_text
 from .config import parse_color
 from .imagery import Lexicon, plan_cues, load_sprite, soft_shadow
+from .text_utils import normalize
 
 WHITE = (255, 255, 255)
+
+
+def _song_seed(cfg, events, title, music, explicit_seed):
+    """Choose one stable visual seed per song, unless the user supplied a seed."""
+    if cfg.seed != 0:
+        return int(cfg.seed)
+    if explicit_seed is not None:
+        return int(explicit_seed)
+
+    parts = [normalize(str(title or ""))]
+    parts.extend(" ".join(normalize(str(w.text)) for w in ev.words) for ev in events)
+    if music is not None:
+        parts.append(f"duration={getattr(music, 'duration', 0.0):.2f}")
+        parts.append(f"tempo={getattr(music, 'tempo', None)}")
+        energy = getattr(music, "energy", None)
+        if energy is not None and len(energy):
+            # Keep the fingerprint small and stable while distinguishing songs
+            # that have the same title and lyrics but different recordings.
+            count = min(64, len(energy))
+            if count == 1:
+                samples = [energy[0]]
+            else:
+                samples = [energy[round(i * (len(energy) - 1) / (count - 1))] for i in range(count)]
+            parts.append("energy=" + ",".join(f"{float(value):.3f}" for value in samples))
+
+    payload = "\n".join(parts).encode("utf-8", errors="replace")
+    return int.from_bytes(hashlib.blake2b(payload, digest_size=8).digest(), "big")
 
 
 def _text_sprite(text, font, fill, pad=24, tracking=0):
@@ -38,24 +67,27 @@ def _paste_alpha(frame, sprite, x, y, alpha=1.0):
 
 
 class FrameRenderer:
-    def __init__(self, cfg, events, W=1080, H=1920, levels=None, title=None, seed=11, lexicon=None,
+    def __init__(self, cfg, events, W=1080, H=1920, levels=None, title=None, seed=None, lexicon=None,
                  music=None, assets=None, llm=None, total_end=None):
-        self.cfg, self.events, self.W, self.H, self.levels = cfg, events, W, H, levels
+        self.title = cfg.title if title is None else title
+        self.seed = _song_seed(cfg, events, self.title, music, seed)
+        # Use the resolved seed everywhere so backgrounds and line-level choices
+        # stay consistent with each other and repeat for the same song.
+        self.cfg = replace(cfg, seed=self.seed)
+        self.events, self.W, self.H, self.levels = events, W, H, levels
         self.music, self.assets = music, assets
         self.cues, self.cue_notes = {}, []
-        if cfg.images:
-            self.lexicon = lexicon or Lexicon(cfg.lexicon_path or None)
-            self.cues, self.cue_notes = plan_cues(events, self.lexicon, cfg)
+        if self.cfg.images:
+            self.lexicon = lexicon or Lexicon(self.cfg.lexicon_path or None)
+            self.cues, self.cue_notes = plan_cues(events, self.lexicon, self.cfg)
         self._img = {}
         self._caps = {}
         self._variants = {}
-        self.direction = direct(events, cfg, music, None, assets, llm, total_end)
+        self.direction = direct(events, self.cfg, music, None, assets, llm, total_end)
         self.plans = self.direction.plans
-        self.scene_r = SceneRenderer(W, H, seed=5 + cfg.seed) if cfg.background == "scenes" else None
+        self.scene_r = SceneRenderer(W, H, seed=self.seed) if self.cfg.background == "scenes" else None
         self.scene_plans = self.plans if self.scene_r else []
         self.scene_notes = list(self.direction.notes)
-        self.title = cfg.title if title is None else title
-        self.seed = seed
         self._layouts, self._sprites = {}, {}
         self.base_full = self._background(1.0)
         self.base_dim = self._background(0.35)
@@ -64,7 +96,7 @@ class FrameRenderer:
     # ---------- background (Video A identity) ----------
     def _background(self, shape_strength):
         W, H = self.W, self.H
-        top, bot = (46, 30, 86), (9, 9, 20)
+        top, bot, _ = night_palette(self.seed)
         grad = Image.new("RGB", (1, H))
         px = grad.load()
         for y in range(H):
