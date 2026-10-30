@@ -29,7 +29,8 @@ ALLOWED_AUDIO = {".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", ".opus", ".wma
 JOB_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 PROJECT_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 DEFAULT_CONTACT = "nanesh7912@gmail.com"
-DEFAULT_MAX_RENDER_PIXELS = 3840 * 2160
+IS_RENDER_SERVICE = os.environ.get("RENDER", "").strip().lower() == "true"
+DEFAULT_MAX_RENDER_PIXELS = 1920 * 1080 if IS_RENDER_SERVICE else 3840 * 2160
 try:
     MAX_RENDER_PIXELS = max(
         360 * 360,
