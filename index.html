@@ -35,7 +35,7 @@ h1,h2,h3,p{margin-top:0}.hero h1{max-width:560px;margin:0 0 16px;font-size:clamp
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
 
 .device-upload{scroll-margin-top:92px;display:grid;grid-template-columns:minmax(0,.85fr) minmax(300px,1.15fr);gap:26px;align-items:start;margin:20px 0 18px;padding:22px;border:1px solid #315071;border-radius:15px;background:linear-gradient(135deg,#102239,#0b1727);box-shadow:0 18px 42px #0003}
-.upload-intro .eyebrow{margin-bottom:10px}.upload-intro h2{margin:0 0 11px;font-size:clamp(23px,3vw,32px);line-height:1.15;letter-spacing:-.8px}.upload-intro>p:not(.eyebrow){color:#aab9cd;font-size:11px;line-height:1.7}.upload-intro .upload-privacy{display:flex;align-items:center;gap:7px;color:#8dd6ba!important}
+.token-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:-8px;color:#8fa4be;font-size:10px}.token-forget{padding:0;border:0;background:transparent;color:#78baff;font-size:10px;font-weight:700;text-decoration:underline;cursor:pointer}.token-forget:hover{color:#b8dcff}.upload-intro .eyebrow{margin-bottom:10px}.upload-intro h2{margin:0 0 11px;font-size:clamp(23px,3vw,32px);line-height:1.15;letter-spacing:-.8px}.upload-intro>p:not(.eyebrow){color:#aab9cd;font-size:11px;line-height:1.7}.upload-intro .upload-privacy{display:flex;align-items:center;gap:7px;color:#8dd6ba!important}
 .upload-form{display:grid;gap:12px;padding:15px;border:1px solid #2b405b;border-radius:11px;background:#091524}.upload-form label>span{display:block;margin-bottom:6px;color:#d6e2f1;font-size:10px;font-weight:750}.upload-form input[type=text],.upload-form input[type=password],.upload-form input[type=file]{display:block;width:100%;min-height:41px;padding:9px;border:1px solid #344c69;border-radius:7px;background:#0d1b2c;color:#edf5ff;font-size:10px}.upload-form input[type=file]{padding:7px}.upload-form input::file-selector-button{min-height:26px;margin-right:9px;padding:0 9px;border:1px solid #406082;border-radius:5px;background:#19324d;color:#eaf4ff;font-size:9px;font-weight:700}.upload-form input::placeholder{color:#8091a8}.upload-form label small{display:block;margin-top:5px;color:#8296b0;font-size:8px;line-height:1.5}
 .upload-help{padding:9px 10px;border:1px solid #263b54;border-radius:7px;background:#0c1928;color:#aebdd0;font-size:9px;line-height:1.65}.upload-help summary{color:#a8d5ff;font-weight:750;cursor:pointer}.upload-help ol{margin:9px 0 8px;padding-left:18px}.upload-help li+li{margin-top:4px}.upload-help code{color:#d9c8ff}.upload-help>a{color:#8bcaff;font-weight:700}.upload-submit{width:100%;cursor:pointer}.upload-submit:disabled{cursor:wait;opacity:.7}.upload-note{margin:0;color:#8195ae;font-size:8px;line-height:1.55}.upload-status{min-height:14px;margin:0;color:#9dcfff;font-size:10px;line-height:1.5}.upload-status[data-state=error]{color:#ffadb4}.upload-status[data-state=success]{color:#6de5b5}.upload-runs{color:#83c9ff;font-size:10px;font-weight:750}.upload-runs[hidden]{display:none}
 @media(max-width:760px){.device-upload{grid-template-columns:1fr;gap:14px;padding:16px}.upload-form{padding:12px}}
@@ -87,20 +87,20 @@ h1,h2,h3,p{margin-top:0}.hero h1{max-width:560px;margin:0 0 16px;font-size:clamp
   <article class="project-card searchable-item" data-search="lyrics timing engine code repository open source python transcription hindi"><div class="project-art art-lyrics"><span class="floating-note note-one">Aa</span><span class="floating-note note-two">अ</span><span class="project-label">LYRICS + TIMING</span></div><div class="project-body"><p class="project-kicker">PROJECT REPOSITORY</p><h3>Lyrics and timing engine</h3><p>Explore the project code for transcription, lyric alignment, visual direction, and video rendering.</p><a class="text-link" href="https://github.com/nanesh7912-stack/lyrics-agent/tree/main/ai_lyrics_hero" target="_blank" rel="noopener">Browse the repository <span aria-hidden="true">→</span></a></div></article>
   <article class="project-card searchable-item" data-search="chand chhupa badal mein latest example video private release"><div class="project-art art-example"><span class="example-lyric">Are re are<br><b>yeh kya hua</b></span><span class="project-label">LATEST EXAMPLE</span></div><div class="project-body"><p class="project-kicker">CHAND CHHUPA BADAL MEIN</p><h3>See a finished render</h3><p>Open the private release containing the video and its lyric review files.</p><a class="text-link" href="https://github.com/nanesh7912-stack/lyrics-agent-renders/releases" target="_blank" rel="noopener">Browse saved videos <span aria-hidden="true">→</span></a></div></article>
 </div><div class="device-upload" id="upload" aria-labelledby="upload-title">
-  <div class="upload-intro"><p class="eyebrow">CREATE YOUR VIDEO</p><h2 id="upload-title">Choose a song from this device.</h2><p>Your audio goes straight from this page to your private GitHub render repository. GitHub Actions starts creating the lyric video as soon as the upload finishes.</p><p class="upload-privacy"><span aria-hidden="true">🔒</span> Your token stays only in this tab’s memory and is sent directly to GitHub. Closing or reloading the tab clears it.</p></div>
+  <div class="upload-intro"><p class="eyebrow">CREATE YOUR VIDEO</p><h2 id="upload-title">Choose a song from this device.</h2><p>Your audio goes straight from this page to your private GitHub render repository. GitHub Actions starts creating the lyric video as soon as the upload finishes.</p><p class="upload-privacy"><span aria-hidden="true">🔒</span> This browser saves your token so uploads can reuse it across tabs and visits. It goes directly to GitHub, not into this site’s code.</p></div>
   <form class="upload-form" id="direct-upload-form">
     <label><span>Song audio file</span><input id="upload-audio" name="audio" type="file" accept=".mp3,.wav,.m4a,.aac,.flac,.ogg,.opus,.wma,.mp4,audio/*" required><small>MP3, WAV, M4A, AAC, FLAC, OGG, OPUS, or WMA · up to 25 MiB</small></label>
     <label><span>Song title (optional)</span><input id="upload-title" name="title" type="text" maxlength="100" autocomplete="off" placeholder="Uses the file name if left blank"></label>
-    <label><span>GitHub upload token (once per open tab)</span><input id="upload-token" name="token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste once for this tab"></label>
-    <details class="upload-help"><summary>How to set up the token</summary><ol><li>Open GitHub’s token settings and create a <strong>fine-grained personal access token</strong>.</li><li>Under repository access, select <strong>Only select repositories</strong>, then choose <code>lyrics-agent-renders</code>.</li><li>Under repository permissions, set <strong>Contents</strong> to <strong>Read and write</strong>. No Actions permission is needed.</li><li>Generate the token, return here, paste it once, and upload. The page reuses it in this tab and clears it when you close or reload the tab.</li></ol><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Open GitHub token settings ↗</a></details>
+    <label><span>GitHub upload token</span><input id="upload-token" name="token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste once; reused in this browser"></label><div class="token-actions"><span>Saved in this browser for future uploads</span><button class="token-forget" id="forget-upload-token" type="button">Forget saved token</button></div>
+    <details class="upload-help"><summary>How to set up the token</summary><ol><li>Open GitHub’s token settings and create a <strong>fine-grained personal access token</strong>.</li><li>Under repository access, select <strong>Only select repositories</strong>, then choose <code>lyrics-agent-renders</code>.</li><li>Under repository permissions, set <strong>Contents</strong> to <strong>Read and write</strong>. No Actions permission is needed.</li><li>Generate the token and paste it here once. This browser saves it for future tabs and visits; use <strong>Forget saved token</strong> to remove it.</li></ol><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Open GitHub token settings ↗</a></details>
     <button class="button button-primary upload-submit" id="upload-submit" type="submit">Upload song and start video <span aria-hidden="true">↑</span></button>
-    <p class="upload-note">Paste the token once in this tab. Additional uploads here use it automatically; closing or reloading the tab clears it. Each upload starts the render automatically.</p>
+    <p class="upload-note">Paste the token once in this browser. It will be reused across tabs and future visits until you choose Forget saved token. Each upload starts the render automatically.</p>
     <p class="upload-status" id="upload-status" role="status" aria-live="polite"></p><a class="upload-runs" id="upload-runs" href="https://github.com/nanesh7912-stack/lyrics-agent-renders/actions/workflows/render-video.yml" target="_blank" rel="noopener" hidden>View render status ↗</a>
   </form>
 </div><div class="workflow-callout"><div><span class="callout-icon" aria-hidden="true">⌁</span><span><strong>Your render is handled by GitHub</strong><small>Each uploaded song starts a private GitHub Actions run. Open the workflow page to see progress and download the finished video.</small></span></div><div class="callout-actions"><a class="button button-secondary" href="#upload">Choose another song</a><a class="button button-primary" href="https://github.com/nanesh7912-stack/lyrics-agent-renders/actions/workflows/render-video.yml" target="_blank" rel="noopener">View render runs</a></div></div>
 <section class="contact-section section-wrap section-block" id="contact" aria-labelledby="contact-title"><div class="section-heading contact-heading"><div><p class="eyebrow">GET IN TOUCH</p><h2 id="contact-title">Have a question or an idea?</h2><p>Send a note about the project, lyric timing, or visual styles.</p></div><a class="social-link" href="https://github.com/nanesh7912-stack/lyrics-agent" target="_blank" rel="noopener" aria-label="AI Lyrics Hero on GitHub"><span aria-hidden="true">◉</span> View the GitHub project</a></div>
 <form class="contact-form" id="contact-form"><div class="contact-fields"><label><span>Your name</span><input name="name" type="text" autocomplete="name" maxlength="100" required placeholder="Name"></label><label><span>Your email</span><input name="email" type="email" autocomplete="email" maxlength="200" required placeholder="you@example.com"></label></div><label><span>Message</span><textarea name="message" rows="5" maxlength="5000" required placeholder="Tell us what you have in mind..."></textarea></label><div class="form-actions"><button class="button button-primary" type="submit">Write an email <span aria-hidden="true">↗</span></button><span>Opens your email app with your message ready.</span></div></form></section>
-<section class="legal-section section-wrap" aria-label="Privacy and terms"><article id="privacy"><h2>Privacy</h2><p>When you upload, this page sends audio directly from your device to the private lyrics-agent-renders GitHub repository. The page keeps your GitHub token in memory for this open tab and sends it only to GitHub for uploads; it clears the token when you close or reload the tab. No separate upload service is used. The email button opens your email app.</p></article><article id="terms"><h2>Terms</h2><p>Only upload songs you have permission to use. Each finished video and its review files are kept in a private GitHub Release until you delete the release or repository. The temporary Actions artifact expires automatically.</p></article></section>
+<section class="legal-section section-wrap" aria-label="Privacy and terms"><article id="privacy"><h2>Privacy</h2><p>When you upload, this page sends audio directly from your device to the private lyrics-agent-renders GitHub repository. If you enter a GitHub token, the page saves it in this browser’s storage so it works across tabs and visits. The token is not written into the site’s code and is sent only to GitHub for uploads. Any script running on this site in your browser could access the saved token, so use this only on a device you control. Choose Forget saved token or clear this site’s browser data to remove it.</p></article><article id="terms"><h2>Terms</h2><p>Only upload songs you have permission to use. Each finished video and its review files are kept in a private GitHub Release until you delete the release or repository. The temporary Actions artifact expires automatically.</p></article></section>
 </main>
 <footer class="site-footer"><div class="footer-inner"><a class="footer-brand" href="#home"><span class="brand-mark" aria-hidden="true"><span></span></span><span><strong>AI Lyrics Hero</strong><small>Every song has a story.</small></span></a><span class="copyright">© <span id="year">2026</span> AI Lyrics Hero</span><nav aria-label="Footer links"><a href="#about">About</a><a href="#projects">Projects</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="#contact">Contact</a></nav></div></footer>
 <script>
@@ -160,10 +160,42 @@ h1,h2,h3,p{margin-top:0}.hero h1{max-width:560px;margin:0 0 16px;font-size:clamp
     const audioInput = document.querySelector('#upload-audio');
     const titleInput = document.querySelector('#upload-title');
     const tokenInput = document.querySelector('#upload-token');
+    const forgetTokenButton = document.querySelector('#forget-upload-token');
     const uploadButton = document.querySelector('#upload-submit');
     const uploadStatus = document.querySelector('#upload-status');
     const uploadRuns = document.querySelector('#upload-runs');
+    const tokenStorageKey = 'ai-lyrics-hero.github-upload-token.v1';
     let sessionToken = '';
+    try {
+      sessionToken = window.localStorage.getItem(tokenStorageKey) || '';
+    } catch (_) {}
+    tokenInput.value = sessionToken;
+    const storeToken = token => {
+      try { window.localStorage.setItem(tokenStorageKey, token); return true; }
+      catch (_) { return false; }
+    };
+    const forgetSavedToken = () => {
+      sessionToken = '';
+      tokenInput.value = '';
+      try { window.localStorage.removeItem(tokenStorageKey); } catch (_) {}
+    };
+    forgetTokenButton.addEventListener('click', () => {
+      forgetSavedToken();
+      setUploadStatus('Saved token removed from this browser.', 'success');
+      tokenInput.focus();
+    });
+    tokenInput.addEventListener('input', () => { sessionToken = tokenInput.value.trim(); });
+    tokenInput.addEventListener('blur', () => {
+      const value = tokenInput.value.trim();
+      if (value) { sessionToken = value; storeToken(value); }
+      else if (!sessionToken) forgetSavedToken();
+    });
+    window.addEventListener('storage', event => {
+      if (event.key === tokenStorageKey) {
+        sessionToken = event.newValue || '';
+        tokenInput.value = sessionToken;
+      }
+    });
     const allowedAudio = new Set(['.mp3','.wav','.m4a','.aac','.flac','.ogg','.opus','.wma','.mp4']);
     const maxAudioBytes = 25 * 1024 * 1024;
 
@@ -188,8 +220,9 @@ h1,h2,h3,p{margin-top:0}.hero h1{max-width:560px;margin:0 0 16px;font-size:clamp
       if (!file) { setUploadStatus('Choose a song from your device first.', 'error'); return; }
       if (!allowedAudio.has(extension)) { setUploadStatus('Choose an MP3, WAV, M4A, AAC, FLAC, OGG, OPUS, WMA, or MP4 audio file.', 'error'); return; }
       if (file.size > maxAudioBytes) { setUploadStatus('This song is larger than 25 MiB. Choose a smaller audio file.', 'error'); return; }
-      if (!token) { setUploadStatus('Paste your GitHub token once for this tab, or open “How to set up the token” to create one.', 'error'); tokenInput.focus(); return; }
+      if (!token) { setUploadStatus('Paste your GitHub token once, or open “How to set up the token” to create one. It will be saved in this browser for future uploads.', 'error'); tokenInput.focus(); return; }
       sessionToken = token;
+      const tokenSaved = storeToken(token);
 
       const requestedTitle = (titleInput.value.trim() || file.name.replace(/\.[^.]+$/, '')).normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
       let safeTitle = requestedTitle.replace(/[^A-Za-z0-9._ -]/g, ' ').replace(/\s+/g, ' ').trim().replace(/[ .]+/g, '-').replace(/-+/g, '-').slice(0, 80);
@@ -199,7 +232,7 @@ h1,h2,h3,p{margin-top:0}.hero h1{max-width:560px;margin:0 0 16px;font-size:clamp
       const apiUrl = 'https://api.github.com/repos/nanesh7912-stack/lyrics-agent-renders/contents/' + path.split('/').map(encodeURIComponent).join('/');
       uploadButton.disabled = true;
       uploadRuns.hidden = true;
-      setUploadStatus('Preparing your song for a direct GitHub upload…');
+      setUploadStatus(tokenSaved ? 'Preparing your song for a direct GitHub upload…' : 'Preparing upload. Your browser could not save the token, so it may ask again after this tab closes.');
       try {
         const content = toBase64(await file.arrayBuffer());
         setUploadStatus('Uploading directly to GitHub. Larger songs may take a little while…');
@@ -210,17 +243,17 @@ h1,h2,h3,p{margin-top:0}.hero h1{max-width:560px;margin:0 0 16px;font-size:clamp
         });
         const result = await response.json().catch(() => ({}));
         if (!response.ok) {
-          if (response.status === 401) { sessionToken = ''; throw new Error('GitHub did not accept this token. It was cleared; check it and paste it again.'); }
-          if (response.status === 403 || response.status === 404) { sessionToken = ''; throw new Error('GitHub could not write to the render repository. The token was cleared; check its repository and Contents: Read and write permission, then paste it again.'); }
+          if (response.status === 401) { forgetSavedToken(); throw new Error('GitHub did not accept this token. It was cleared; check it and paste it again.'); }
+          if (response.status === 403 || response.status === 404) { forgetSavedToken(); throw new Error('GitHub could not write to the render repository. The token was cleared; check its repository and Contents: Read and write permission, then paste it again.'); }
           throw new Error('GitHub upload failed (' + response.status + '). ' + (result.message || 'Please try again.'));
         }
         uploadForm.reset();
         uploadRuns.hidden = false;
-        setUploadStatus('Song uploaded. GitHub Actions is starting your lyric video now. You can upload more songs in this tab without pasting the token again.', 'success');
+        setUploadStatus('Song uploaded. GitHub Actions is starting your lyric video. This browser saved your token for future uploads.', 'success');
       } catch (error) {
         setUploadStatus(error instanceof Error ? error.message : 'The upload did not finish. Please try again.', 'error');
       } finally {
-        tokenInput.value = '';
+        tokenInput.value = sessionToken;
         uploadButton.disabled = false;
       }
     });
