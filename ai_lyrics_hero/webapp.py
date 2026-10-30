@@ -29,6 +29,14 @@ ALLOWED_AUDIO = {".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", ".opus", ".wma
 JOB_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 PROJECT_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 DEFAULT_CONTACT = "nanesh7912@gmail.com"
+DEFAULT_MAX_RENDER_PIXELS = 3840 * 2160
+try:
+    MAX_RENDER_PIXELS = max(
+        360 * 360,
+        int(os.environ.get("AI_LYRICS_HERO_MAX_RENDER_PIXELS", str(DEFAULT_MAX_RENDER_PIXELS))),
+    )
+except ValueError:
+    MAX_RENDER_PIXELS = DEFAULT_MAX_RENDER_PIXELS
 
 
 def _now():
@@ -392,7 +400,8 @@ def create_app(test_config=None):
     @app.get("/api/session")
     def session_info():
         owner_id()
-        return jsonify(csrf_token=csrf_token(), contact_email=DEFAULT_CONTACT)
+        return jsonify(csrf_token=csrf_token(), contact_email=DEFAULT_CONTACT,
+                       max_render_pixels=MAX_RENDER_PIXELS)
 
     @app.get("/api/health")
     def health():
@@ -473,10 +482,13 @@ def create_app(test_config=None):
                 raise ValueError("Video length must be between 2 and 600 seconds.")
             if fps not in {24, 25, 30, 60}:
                 raise ValueError("Choose 24, 25, 30, or 60 frames per second.")
-            max_4k_pixels = 3840 * 2160
-            if (width < 360 or height < 360 or width > 3840 or height > 3840
-                    or width * height > max_4k_pixels):
-                raise ValueError("Video dimensions must be between 360 pixels and the 4K UHD pixel limit.")
+            if width < 360 or height < 360 or width > 3840 or height > 3840:
+                raise ValueError("Video dimensions must be between 360 pixels and the 4K UHD limit.")
+            if width * height > MAX_RENDER_PIXELS:
+                return jsonify(error=(
+                    "This Render service is limited to 1080p to prevent memory restarts. "
+                    "Choose a 720p or 1080p size. 4K needs a higher-memory service."
+                )), 400
         except (ValueError, TypeError):
             return jsonify(error="Check the video length, start time, size, and frame rate."), 400
         lyrics_text = (payload.get("lyrics_text") or "").strip()

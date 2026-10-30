@@ -66,13 +66,30 @@ class MusicMap:
 
 
 def _spectral_flux(x):
+    """Compute onset strength in bounded chunks to avoid a song-sized frame matrix."""
     n = 1 + (len(x) - FRAME) // HOP
-    idx = np.arange(FRAME)[None, :] + HOP * np.arange(n)[:, None]
-    mags = np.abs(np.fft.rfft(x[idx] * np.hanning(FRAME)[None, :], axis=1))
-    logm = np.log1p(mags * 20)
-    flux = np.maximum(0, np.diff(logm, axis=0)).sum(axis=1)
-    rms = np.sqrt((x[idx] ** 2).mean(axis=1))
-    return np.concatenate([[0], flux]), rms
+    flux = np.zeros(n)
+    rms = np.empty(n, dtype=np.float32)
+    offsets = np.arange(FRAME)[None, :]
+    window = np.hanning(FRAME)[None, :]
+    previous_log = None
+    chunk_size = 256
+
+    for first in range(0, n, chunk_size):
+        stop = min(n, first + chunk_size)
+        idx = offsets + HOP * np.arange(first, stop)[:, None]
+        frames = x[idx]
+        logm = np.log1p(np.abs(np.fft.rfft(frames * window, axis=1)) * 20)
+
+        if previous_log is not None:
+            flux[first] = np.maximum(0, logm[0] - previous_log).sum()
+        if stop - first > 1:
+            flux[first + 1:stop] = np.maximum(0, np.diff(logm, axis=0)).sum(axis=1)
+
+        rms[first:stop] = np.sqrt((frames ** 2).mean(axis=1))
+        previous_log = logm[-1].copy()
+
+    return flux, rms
 
 
 def _pick_peaks(env, hop_s, min_gap=0.12):
