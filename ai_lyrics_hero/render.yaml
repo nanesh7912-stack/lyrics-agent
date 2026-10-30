@@ -14,6 +14,12 @@ services:
         value: /tmp/whisper-models
       - key: AI_LYRICS_HERO_FORCE_MODEL
         value: tiny
+      - key: AI_LYRICS_HERO_ASR_COMPUTE_TYPE
+        value: int8
+      - key: AI_LYRICS_HERO_ASR_CPU_THREADS
+        value: "1"
+      - key: AI_LYRICS_HERO_MAX_RENDER_PIXELS
+        value: "2073600"
       - key: AI_LYRICS_HERO_SECRET_KEY
         generateValue: true
       - key: AI_LYRICS_HERO_COOKIE_SECURE
