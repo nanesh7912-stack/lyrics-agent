@@ -27,6 +27,7 @@
         step: 1,
         csrfToken: '',
         contactEmail: 'nanesh7912@gmail.com',
+        maxRenderPixels: 2073600,
         audioFile: null,
         audioUrl: '',
         isDragging: false,
@@ -95,6 +96,7 @@
         const info = await this.api('/api/session');
         this.csrfToken = info.csrf_token;
         this.contactEmail = info.contact_email || this.contactEmail;
+        this.maxRenderPixels = Number(info.max_render_pixels) || this.maxRenderPixels;
         await Promise.all([this.refreshProjects(), this.refreshJobs()]);
       } catch (error) { this.showToast(error.message || 'Could not connect to the video service.', 'error'); }
     },
