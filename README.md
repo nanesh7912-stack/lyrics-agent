@@ -49,10 +49,11 @@ Linux/macOS: the same with `source .venv/bin/activate`.
    romanized into Latin letters (Hindi pronunciation, not an English translation). Check spellings before
    publishing, especially for sung words. You can also provide your own `lyrics.txt` or `.lrc` file; supplied lyrics are
    used as written unless you add `--romanize`. Put `[[word]]` around a word to force it as the hero word.
-   The browser app scans the full transcript by default; the `make` command does this by default when
-   `--target-duration` is set without a manual range. It chooses the strongest continuous section for your video
-   length by scoring timed-word density, lyric coverage, repeated phrases, and confidence;
-   the review report records the selected original-song timestamps. This section choice is best effort, so review spellings and timing before publishing.
+   The browser app scans the full transcript by default and caps short-form clips at 40 seconds. The `make` command
+   also scans the full song when `--target-duration` is set without a manual range. It chooses a viral-style hook
+   candidate by prioritizing repeated lines and phrases, then balancing lyric coverage, word density, complete lines,
+   and timing confidence. This is an in-song heuristic, not a prediction of social-media trends; the review report
+   records the selected original-song timestamps. Review spellings and timing before publishing.
 2. **Audio**: mp3/wav/m4a/... (anything FFmpeg reads).
 3. Run:
 ```powershell

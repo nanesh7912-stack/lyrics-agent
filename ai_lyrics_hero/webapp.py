@@ -30,6 +30,7 @@ JOB_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 PROJECT_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 DEFAULT_CONTACT = "nanesh7912@gmail.com"
 IS_RENDER_SERVICE = os.environ.get("RENDER", "").strip().lower() == "true"
+MAX_SHORT_VIDEO_SECONDS = 40
 DEFAULT_MAX_RENDER_PIXELS = 1920 * 1080 if IS_RENDER_SERVICE else 3840 * 2160
 try:
     MAX_RENDER_PIXELS = max(
@@ -479,8 +480,8 @@ def create_app(test_config=None):
             width, height = (int(part) for part in payload.get("size", "1080x1920").lower().split("x", 1))
             if not 0 <= start < 24 * 60 * 60:
                 raise ValueError("Start time must be between 0 and 24 hours.")
-            if not 2 <= duration <= 600:
-                raise ValueError("Video length must be between 2 and 600 seconds.")
+            if not 2 <= duration <= MAX_SHORT_VIDEO_SECONDS:
+                return jsonify(error=f"Video length must be between 2 and {int(MAX_SHORT_VIDEO_SECONDS)} seconds."), 400
             if fps not in {24, 25, 30, 60}:
                 raise ValueError("Choose 24, 25, 30, or 60 frames per second.")
             if width < 360 or height < 360 or width > 3840 or height > 3840:

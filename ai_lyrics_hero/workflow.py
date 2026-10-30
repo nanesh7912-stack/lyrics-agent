@@ -207,11 +207,11 @@ def format_review(rep):
         out.append("")
     selection = rep.get("auto_selection")
     if selection:
-        out.append(f"Best lyric section selected from the full {rep.get('audio_duration', 0):.2f}s song: "
-                   f"scanned {selection['candidates_scanned']} windows; lyric coverage "
-                   f"{selection['lyric_coverage']:.0%}, {selection['word_density']:.2f} words/s, "
-                   f"{selection['complete_lines']} complete lines, "
-                   f"{selection['repeated_phrase_hits']} repeated phrases.")
+        out.append(f"Best-effort hook section selected from the full {rep.get('audio_duration', 0):.2f}s song: "
+                   f"scanned {selection['candidates_scanned']} windows; hook score "
+                   f"{selection.get('hook_score', 0):.0%}, lyric coverage {selection['lyric_coverage']:.0%}, "
+                   f"{selection['word_density']:.2f} words/s, {selection['complete_lines']} complete lines, "
+                   f"{selection['repeated_phrase_hits']} repeated hook signals.")
         out.append("")
     for w in rep["warnings"]:
         out.append("WARNING: " + w)
@@ -262,7 +262,7 @@ def _song_time(seconds):
 
 
 def select_best_lyric_window(lines, audio_duration, window_duration, step=0.5):
-    """Choose a continuous, lyric-dense window by scanning the entire song transcript."""
+    """Rank continuous windows by lyric quality and repeatable, hook-like phrases."""
     audio_duration = float(audio_duration)
     window_duration = float(window_duration)
     step = max(0.1, float(step))
@@ -394,14 +394,14 @@ def select_best_lyric_window(lines, audio_duration, window_duration, step=0.5):
         complete_ratio = complete / max(1, len(overlapping))
         ngram_repeat_hits = sum(count for phrase, count in window_phrases.items()
                                 if repeated_phrases.get(phrase, 0) > 1)
-        repeat_hits = exact_repeat_hits + ngram_repeat_hits
-        repeat_bonus = min(1.0, repeat_hits / 8.0)
-        score = (0.42 * coverage + 0.30 * min(1.0, density / 1.5) + 0.10 * confidence +
-                 0.03 * complete_ratio + 0.15 * repeat_bonus - min(0.15, clipping * 0.025))
+        hook_phrase_hits = exact_repeat_hits * 2 + ngram_repeat_hits
+        hook_score = min(1.0, hook_phrase_hits / 10.0)
+        score = (0.34 * coverage + 0.18 * min(1.0, density / 1.5) + 0.12 * confidence +
+                 0.06 * complete_ratio + 0.30 * hook_score - min(0.10, clipping * 0.025))
         result = {"start": round(start, 3), "end": round(end, 3), "score": round(score, 5),
                   "lyric_coverage": round(coverage, 4), "word_density": round(density, 3),
-                  "repeated_phrase_hits": repeat_hits, "complete_lines": complete,
-                  "candidates_scanned": len(candidates)}
+                  "hook_score": round(hook_score, 4), "repeated_phrase_hits": hook_phrase_hits,
+                  "complete_lines": complete, "candidates_scanned": len(candidates)}
         if best is None or (result["score"], result["repeated_phrase_hits"], result["lyric_coverage"], -start) > \
                 (best["score"], best["repeated_phrase_hits"], best["lyric_coverage"], -best["start"]):
             best = result

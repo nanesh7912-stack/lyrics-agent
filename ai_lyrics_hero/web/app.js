@@ -21,6 +21,10 @@
     data() {
       let savedDefaults = {};
       try { savedDefaults = JSON.parse(localStorage.getItem('lyricsHeroDefaults') || '{}'); } catch (_) { savedDefaults = {}; }
+      const storedDuration = Number(savedDefaults.duration);
+      const defaultDuration = Number.isFinite(storedDuration) && storedDuration >= 2
+        ? Math.min(40, storedDuration)
+        : 40;
       return {
         view: thisViewFromPath(),
         mobileMenuOpen: false,
@@ -51,13 +55,13 @@
         settingsSaved: false,
         contact: { name: '', email: '', subject: '', message: '' },
         defaults: {
-          duration: Number(savedDefaults.duration) || 40,
+          duration: defaultDuration,
           language: savedDefaults.language || '',
           romanize: Boolean(savedDefaults.romanize),
         },
         options: {
           title: 'My lyric video', trackTitle: '', artist: '', lyricsLookup: true,
-          start: 0, autoSelect: true, duration: Number(savedDefaults.duration) || 40,
+          start: 0, autoSelect: true, duration: defaultDuration,
           size: '1080x1920', fps: 30, style: 'scene-hero', language: savedDefaults.language || '',
           romanize: Boolean(savedDefaults.romanize),
         },
@@ -176,8 +180,8 @@
       },
       continueStep() {
         if (this.step === 1 && !this.audioFile) { this.showToast('Choose a song before you continue.', 'error'); return; }
-        if (this.step === 2 && (!Number.isFinite(Number(this.options.start)) || Number(this.options.start) < 0 || !Number.isFinite(Number(this.options.duration)) || Number(this.options.duration) < 2 || Number(this.options.duration) > 600)) {
-          this.showToast('Use a start time from 0 and a video length from 2 to 600 seconds.', 'error'); return;
+        if (this.step === 2 && (!Number.isFinite(Number(this.options.start)) || Number(this.options.start) < 0 || !Number.isFinite(Number(this.options.duration)) || Number(this.options.duration) < 2 || Number(this.options.duration) > 40)) {
+          this.showToast('Use a start time from 0 and a video length from 2 to 40 seconds.', 'error'); return;
         }
         this.step = Math.min(4, this.step + 1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -318,6 +322,9 @@
       loadProject(project) {
         const settings = project.settings || {};
         this.options = { ...this.options, ...settings };
+        this.options.duration = Number.isFinite(Number(this.options.duration))
+          ? Math.max(2, Math.min(40, Number(this.options.duration)))
+          : 40;
         this.lyricsMode = settings.lyricsMode || 'auto';
         this.lyricsText = settings.lyricsText || '';
         this.lyricsFormat = settings.lyricsFormat || 'plain';
@@ -367,7 +374,7 @@
         this.navigate('create');
       },
       saveDefaults() {
-        const duration = Math.max(2, Math.min(600, Number(this.defaults.duration) || 40));
+        const duration = Math.max(2, Math.min(40, Number(this.defaults.duration) || 40));
         this.defaults.duration = duration;
         localStorage.setItem('lyricsHeroDefaults', JSON.stringify(this.defaults));
         this.settingsSaved = true;
