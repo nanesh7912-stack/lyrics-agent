@@ -119,14 +119,29 @@ def transcribe(
 
     from faster_whisper import WhisperModel
 
+    configured_compute_type = os.environ.get("AI_LYRICS_HERO_ASR_COMPUTE_TYPE", "").strip()
     selected_compute_type = (
-        "default" if compute_type == "auto" else compute_type
+        configured_compute_type
+        if compute_type == "auto" and configured_compute_type
+        else "default" if compute_type == "auto" else compute_type
     )
+
+    model_options = {}
+    configured_cpu_threads = os.environ.get("AI_LYRICS_HERO_ASR_CPU_THREADS", "").strip()
+    if configured_cpu_threads:
+        try:
+            cpu_threads = int(configured_cpu_threads)
+        except ValueError as exc:
+            raise ValueError("AI_LYRICS_HERO_ASR_CPU_THREADS must be a positive integer.") from exc
+        if cpu_threads < 1:
+            raise ValueError("AI_LYRICS_HERO_ASR_CPU_THREADS must be a positive integer.")
+        model_options["cpu_threads"] = cpu_threads
 
     model = WhisperModel(
         model_size,
         device=device,
         compute_type=selected_compute_type,
+        **model_options,
     )
 
     segments, _info = model.transcribe(
