@@ -119,15 +119,17 @@ def transcribe(
 
     from faster_whisper import WhisperModel
 
+    render_environment = os.environ.get("RENDER", "").strip().lower() == "true"
     configured_compute_type = os.environ.get("AI_LYRICS_HERO_ASR_COMPUTE_TYPE", "").strip()
-    selected_compute_type = (
-        configured_compute_type
-        if compute_type == "auto" and configured_compute_type
-        else "default" if compute_type == "auto" else compute_type
-    )
+    if compute_type == "auto":
+        selected_compute_type = configured_compute_type or ("int8" if render_environment else "default")
+    else:
+        selected_compute_type = compute_type
 
     model_options = {}
     configured_cpu_threads = os.environ.get("AI_LYRICS_HERO_ASR_CPU_THREADS", "").strip()
+    if not configured_cpu_threads and render_environment:
+        configured_cpu_threads = "1"
     if configured_cpu_threads:
         try:
             cpu_threads = int(configured_cpu_threads)
